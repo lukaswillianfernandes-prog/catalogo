@@ -52,8 +52,7 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
 .drop{border:2px dashed #ccc;border-radius:6px;padding:28px;text-align:center;cursor:pointer;background:#fafafa}
 .drop:hover,.drop.over{border-color:#1565c0;background:#e3f2fd}
 .drop input{display:none}
-.drop-icon{font-size:30px;color:#ccc;margin-bottom:8px}
-.drop p{font-size:13px;color:#888}
+.drop p{font-size:13px;color:#888;margin-top:8px}
 .drop small{font-size:11px;color:#bbb}
 .msg{padding:10px;border-radius:4px;font-size:13px;margin-top:10px;display:none}
 .msg.ok{background:#e8f5e9;color:#2e7d32;display:block}
@@ -62,6 +61,7 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
 .save-btn:disabled{background:#aaa;cursor:not-allowed}
 .empty{padding:30px;text-align:center;color:#888;font-size:13px}
 .no-img{width:100%;aspect-ratio:1;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#bbb}
+.loading{text-align:center;padding:40px;color:#888;font-size:13px}
 @media(max-width:600px){.cat-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
@@ -82,10 +82,24 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
   </nav>
 </header>
 
-<div id="home" class="page active"><p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Categorias</p><div class="cat-grid" id="homeGrid"></div></div>
-<div id="all" class="page"><p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Todas as Categorias</p><div class="cat-grid" id="allGrid"></div></div>
-<div class="view" id="catView"><button class="back-btn" onclick="goBack()">&#8592; Voltar</button><div class="view-title" id="catTitle"></div><div class="products-grid" id="catGrid"></div></div>
-<div class="view" id="searchView"><button class="back-btn" onclick="closeSearch()">&#8592; Voltar</button><div class="view-title">Resultados</div><div class="products-grid" id="searchGrid"></div></div>
+<div id="home" class="page active">
+  <p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Categorias</p>
+  <div class="cat-grid" id="homeGrid"></div>
+</div>
+<div id="all" class="page">
+  <p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Todas as Categorias</p>
+  <div class="cat-grid" id="allGrid"></div>
+</div>
+<div class="view" id="catView">
+  <button class="back-btn" onclick="goBack()">&#8592; Voltar</button>
+  <div class="view-title" id="catTitle"></div>
+  <div class="products-grid" id="catGrid"></div>
+</div>
+<div class="view" id="searchView">
+  <button class="back-btn" onclick="closeSearch()">&#8592; Voltar</button>
+  <div class="view-title">Resultados</div>
+  <div class="products-grid" id="searchGrid"></div>
+</div>
 
 <div class="lightbox" id="lb" onclick="lbBg(event)">
   <span class="lb-close" onclick="closeLb()">&#10005;</span>
@@ -107,9 +121,9 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
     <div class="import-body">
       <div class="drop" id="drop" onclick="document.getElementById('fi').click()"
         ondragover="dzo(event)" ondragleave="dzl()" ondrop="dzd(event)">
-        <div class="drop-icon">&#128196;</div>
+        <div style="font-size:32px;color:#ccc">&#128196;</div>
         <p>Clique ou arraste o arquivo <b>yupoo_catalog.json</b></p>
-        <small>O arquivo completo com todos os álbuns e imagens</small>
+        <small>O arquivo completo com todos os álbuns</small>
         <input type="file" id="fi" accept=".json" onchange="loadJson(this.files[0])">
       </div>
       <div class="msg" id="iMsg"></div>
@@ -119,164 +133,188 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
 </div>
 
 <script>
+// ---- PROXY URL ----
+const PROXY = 'https://yupoo-proxy.lukaswillianfernandes.workers.dev';
+
+// Categorias ignoradas
+const IGNORAR = ['Promoções','Kids Tracksuit','Website shopping tutorial',
+  'Casual T-shirt','Windbreaker','Patch !','sock','Shorts','SIZE',
+  'Call Me Whatsapp','Call Me →','Player','Total classification',
+  'NBA Silk version','F1','NFL','MLB','NHL','Hat',"kids'",'Woman',
+  'retro style 2','Baby jersey size:9-12','Kings League'];
+
+function proxyUrl(url) {
+  if (!url) return '';
+  return PROXY + '?url=' + encodeURIComponent(url);
+}
+
 let catalog = [];
 let pending = null;
 let prevPage = 'home';
 let lbImgs = [], lbIdx = 0, lbTitle = '';
 
-// Load from localStorage
 function load(){
-  try{ const d=localStorage.getItem('yjcat'); if(d) catalog=JSON.parse(d); }catch(e){}
+  try{ const d=localStorage.getItem('yjcat2'); if(d) catalog=JSON.parse(d); }catch(e){}
   render();
 }
 
 function save(data){
-  try{ localStorage.setItem('yjcat', JSON.stringify(data)); }catch(e){
-    // Too big — save slim version (1 img per album)
-    try{ localStorage.setItem('yjcat', JSON.stringify(data.map(a=>({...a,images:[a.images[0]]})))); }catch(e2){}
+  try{ localStorage.setItem('yjcat2', JSON.stringify(data)); }
+  catch(e){
+    try{ localStorage.setItem('yjcat2', JSON.stringify(data.map(a=>({...a,images:[a.images[0]]})))); }
+    catch(e2){ console.warn('Storage cheio'); }
   }
 }
 
 function largeImgs(imgs){
-  const l = imgs.filter(u=>u&&u.includes('/large.'));
+  const l = imgs.filter(u => u && u.includes('/large.'));
   return l.length ? l : (imgs.length ? [imgs[0]] : []);
 }
 
 function cats(){
-  const s=new Set(); catalog.forEach(a=>s.add(a.cat));
-  const order=['New Arrivals','Premier League','La Liga','Serie A','Bundesliga','Ligue 1',
+  const s = new Set();
+  catalog.forEach(a => { if(!IGNORAR.includes(a.cat)) s.add(a.cat); });
+  const order = ['New Arrivals','Premier League','La Liga','Serie A','Bundesliga','Ligue 1',
     'Brasileiro Série A','Liga Portugal','Superliga Argentina','Dutch Eredivisie','Scottish League',
     'Liga MX','Saudi Professional League','MLS','Chile League','Japan League',
     'UEFA Euro 2024','2026 World Cup','National Team','Retro'];
-  const res=order.filter(c=>s.has(c));
-  s.forEach(c=>{ if(!res.includes(c)) res.push(c); });
+  const res = order.filter(c => s.has(c));
+  s.forEach(c => { if(!res.includes(c)) res.push(c); });
   return res;
 }
 
 function renderCatGrid(id){
-  document.getElementById(id).innerHTML = cats().map(c=>{
-    const n=catalog.filter(a=>a.cat===c).length;
+  document.getElementById(id).innerHTML = cats().map(c => {
+    const n = catalog.filter(a => a.cat === c).length;
     return `<div class="cat-item" onclick="openCat('${c.replace(/'/g,"\\'")}')">
-      <span>${c}${n?`<span class="badge">${n}</span>`:''}</span>
-      <span style="color:#bbb;font-size:11px">&#8250;</span></div>`;
+      <span>${c}${n ? `<span class="badge">${n}</span>` : ''}</span>
+      <span style="color:#bbb;font-size:11px">&#8250;</span>
+    </div>`;
   }).join('');
 }
 
 function render(){ renderCatGrid('homeGrid'); renderCatGrid('allGrid'); }
 
 function card(a){
-  const imgs=largeImgs(a.images);
-  const img=imgs.length
-    ? `<img class="prod-img" src="${imgs[0]}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\\'no-img\\'>Sem imagem</div>'">`
+  const imgs = largeImgs(a.images);
+  const thumb = imgs.length ? proxyUrl(imgs[0]) : '';
+  const img = thumb
+    ? `<img class="prod-img" src="${thumb}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\\'no-img\\'>Sem imagem</div>'">`
     : `<div class="no-img">Sem imagem</div>`;
   return `<div class="prod-card" onclick="openLb('${a.albumId}')">
     ${img}
     <div class="prod-info">
       <div class="prod-name">${a.album}</div>
-      ${imgs.length>1?`<div class="prod-sub">${imgs.length} fotos</div>`:''}
-    </div></div>`;
+      ${imgs.length > 1 ? `<div class="prod-sub">${imgs.length} fotos</div>` : ''}
+    </div>
+  </div>`;
 }
 
 function openCat(cat){
-  prevPage=document.querySelector('.page.active')?.id||'home';
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v=>v.style.display='none');
-  const cv=document.getElementById('catView'); cv.style.display='block';
-  document.getElementById('catTitle').textContent=cat;
-  const items=catalog.filter(a=>a.cat===cat);
-  document.getElementById('catGrid').innerHTML=items.length
+  prevPage = document.querySelector('.page.active')?.id || 'home';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+  const cv = document.getElementById('catView'); cv.style.display = 'block';
+  document.getElementById('catTitle').textContent = cat;
+  const items = catalog.filter(a => a.cat === cat);
+  document.getElementById('catGrid').innerHTML = items.length
     ? items.map(card).join('')
-    : `<div class="empty">Nenhum produto nesta categoria.<br>Importe o arquivo JSON completo.</div>`;
+    : `<div class="empty">Nenhum produto. Importe o JSON completo.</div>`;
 }
 
-function showPage(id,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v=>v.style.display='none');
+function showPage(id, el){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
   document.getElementById(id).classList.add('active');
-  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
   if(el) el.classList.add('active');
-  prevPage=id;
+  prevPage = id;
 }
 
 function goBack(){
-  document.getElementById('catView').style.display='none';
-  document.getElementById(prevPage||'home').classList.add('active');
+  document.getElementById('catView').style.display = 'none';
+  document.getElementById(prevPage || 'home').classList.add('active');
 }
 
 function search(q){
-  q=q.trim().toLowerCase();
-  if(!q){closeSearch();return;}
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v=>v.style.display='none');
-  document.getElementById('searchView').style.display='block';
-  const res=catalog.filter(a=>a.album.toLowerCase().includes(q)||a.cat.toLowerCase().includes(q));
-  document.getElementById('searchGrid').innerHTML=res.length?res.map(card).join(''):'<div class="empty">Nenhum resultado.</div>';
+  q = q.trim().toLowerCase();
+  if(!q){ closeSearch(); return; }
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+  document.getElementById('searchView').style.display = 'block';
+  const res = catalog.filter(a => a.album.toLowerCase().includes(q) || a.cat.toLowerCase().includes(q));
+  document.getElementById('searchGrid').innerHTML = res.length
+    ? res.map(card).join('')
+    : '<div class="empty">Nenhum resultado.</div>';
 }
 
 function closeSearch(){
-  document.getElementById('searchView').style.display='none';
-  document.getElementById('q').value='';
-  document.getElementById(prevPage||'home').classList.add('active');
+  document.getElementById('searchView').style.display = 'none';
+  document.getElementById('q').value = '';
+  document.getElementById(prevPage || 'home').classList.add('active');
 }
 
 function openLb(id){
-  const a=catalog.find(x=>x.albumId===id); if(!a) return;
-  lbImgs=largeImgs(a.images); lbIdx=0; lbTitle=a.album;
+  const a = catalog.find(x => x.albumId === id); if(!a) return;
+  lbImgs = largeImgs(a.images); lbIdx = 0; lbTitle = a.album;
   updLb(); document.getElementById('lb').classList.add('open');
 }
+
 function updLb(){
-  document.getElementById('lbImg').src=lbImgs[lbIdx];
-  document.getElementById('lbName').textContent=lbTitle;
-  document.getElementById('lbSub').textContent=lbImgs.length>1?`Foto ${lbIdx+1} de ${lbImgs.length}`:'';
-  document.getElementById('lbNav').style.display=lbImgs.length>1?'flex':'none';
+  document.getElementById('lbImg').src = proxyUrl(lbImgs[lbIdx]);
+  document.getElementById('lbName').textContent = lbTitle;
+  document.getElementById('lbSub').textContent = lbImgs.length > 1 ? `Foto ${lbIdx+1} de ${lbImgs.length}` : '';
+  document.getElementById('lbNav').style.display = lbImgs.length > 1 ? 'flex' : 'none';
 }
-function lbMove(d,e){e.stopPropagation();lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length;updLb();}
-function closeLb(){document.getElementById('lb').classList.remove('open');}
-function lbBg(e){if(e.target===document.getElementById('lb'))closeLb();}
-document.addEventListener('keydown',e=>{
-  if(!document.getElementById('lb').classList.contains('open'))return;
-  if(e.key==='ArrowRight')lbMove(1,{stopPropagation:()=>{}});
-  if(e.key==='ArrowLeft')lbMove(-1,{stopPropagation:()=>{}});
-  if(e.key==='Escape')closeLb();
+
+function lbMove(d, e){ e.stopPropagation(); lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length; updLb(); }
+function closeLb(){ document.getElementById('lb').classList.remove('open'); }
+function lbBg(e){ if(e.target===document.getElementById('lb')) closeLb(); }
+
+document.addEventListener('keydown', e => {
+  if(!document.getElementById('lb').classList.contains('open')) return;
+  if(e.key==='ArrowRight') lbMove(1,{stopPropagation:()=>{}});
+  if(e.key==='ArrowLeft') lbMove(-1,{stopPropagation:()=>{}});
+  if(e.key==='Escape') closeLb();
 });
 
-function openImport(){document.getElementById('importOverlay').classList.add('open');}
-function closeImport(){document.getElementById('importOverlay').classList.remove('open');pending=null;document.getElementById('saveBtn').disabled=true;msg('');}
-function dzo(e){e.preventDefault();document.getElementById('drop').classList.add('over');}
-function dzl(){document.getElementById('drop').classList.remove('over');}
-function dzd(e){e.preventDefault();dzl();if(e.dataTransfer.files[0])loadJson(e.dataTransfer.files[0]);}
+function openImport(){ document.getElementById('importOverlay').classList.add('open'); }
+function closeImport(){ document.getElementById('importOverlay').classList.remove('open'); pending=null; document.getElementById('saveBtn').disabled=true; msg('',''); }
+function dzo(e){ e.preventDefault(); document.getElementById('drop').classList.add('over'); }
+function dzl(){ document.getElementById('drop').classList.remove('over'); }
+function dzd(e){ e.preventDefault(); dzl(); if(e.dataTransfer.files[0]) loadJson(e.dataTransfer.files[0]); }
 
 function loadJson(f){
-  if(!f)return;
-  const r=new FileReader();
-  r.onload=e=>{
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = e => {
     try{
-      const d=JSON.parse(e.target.result);
-      if(!Array.isArray(d))throw new Error('Formato inválido');
-      pending=d;
-      msg('ok',`✓ ${d.length} álbuns lidos. Clique em "Carregar no Catálogo".`);
-      document.getElementById('saveBtn').disabled=false;
-    }catch(err){msg('err','Erro: '+err.message);}
+      const d = JSON.parse(e.target.result);
+      if(!Array.isArray(d)) throw new Error('Formato inválido');
+      pending = d;
+      msg('ok', '✓ ' + d.length + ' álbuns lidos. Clique em "Carregar no Catálogo".');
+      document.getElementById('saveBtn').disabled = false;
+    } catch(err){ msg('err', 'Erro: ' + err.message); }
   };
   r.readAsText(f);
 }
 
 function doSave(){
-  if(!pending)return;
-  const btn=document.getElementById('saveBtn');
-  btn.disabled=true; btn.textContent='Salvando...';
-  catalog=pending;
+  if(!pending) return;
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true; btn.textContent = 'Salvando...';
+  catalog = pending;
   save(catalog);
   render();
-  btn.textContent='Carregar no Catálogo';
-  msg('ok',`✓ ${catalog.length} álbuns carregados! Feche e navegue pelo catálogo.`);
-  setTimeout(closeImport,2000);
+  btn.textContent = 'Carregar no Catálogo';
+  msg('ok', '✓ ' + catalog.length + ' álbuns carregados!');
+  setTimeout(closeImport, 2000);
 }
 
-function msg(type,text){
-  const el=document.getElementById('iMsg');
-  el.className='msg'+(type?' '+type:'');
-  el.textContent=text||'';
+function msg(type, text){
+  const el = document.getElementById('iMsg');
+  el.className = 'msg' + (type ? ' '+type : '');
+  el.textContent = text || '';
 }
 
 load();
