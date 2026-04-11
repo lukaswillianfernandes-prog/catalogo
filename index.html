@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Soccer Jersey & Retro Shirts</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f5;color:#222;font-size:14px}
+header{background:#fff;border-bottom:1px solid #ddd;padding:0 16px;position:sticky;top:0;z-index:100}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:10px 0;gap:10px;flex-wrap:wrap}
+.logo{font-size:16px;font-weight:700;color:#1a1a1a}
+.search-bar{display:flex;flex:1;min-width:180px;max-width:420px;border:1px solid #ccc;border-radius:4px;overflow:hidden}
+.search-bar input{flex:1;padding:7px 10px;border:none;outline:none;font-size:13px}
+.search-bar button{background:#2e7d32;color:#fff;border:none;padding:7px 14px;cursor:pointer;font-size:13px}
+.import-btn{background:#1565c0;color:#fff;border:none;padding:7px 14px;border-radius:4px;cursor:pointer;font-size:12px;white-space:nowrap}
+nav{display:flex;gap:20px;border-top:1px solid #eee}
+nav a{padding:9px 0;font-size:13px;color:#444;text-decoration:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
+.page{display:none;padding:16px}
+.page.active{display:block}
+.view{display:none;padding:16px}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border:1px solid #e0e0e0}
+.cat-item{padding:12px 14px;font-size:13px;color:#222;cursor:pointer;border-right:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center;transition:background .12s}
+.cat-item:hover{background:#e8f5e9;color:#2e7d32}
+.badge{background:#e8f5e9;color:#2e7d32;font-size:10px;padding:1px 6px;border-radius:3px;margin-left:5px}
+.back-btn{background:none;border:1px solid #ccc;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:12px;margin-bottom:14px;color:#444}
+.back-btn:hover{background:#eee}
+.view-title{font-size:15px;font-weight:700;margin-bottom:14px}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.prod-card{background:#fff;border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;cursor:pointer;transition:box-shadow .15s}
+.prod-card:hover{box-shadow:0 3px 10px rgba(0,0,0,.13);border-color:#2e7d32}
+.prod-img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#f0f0f0}
+.prod-info{padding:8px 10px}
+.prod-name{font-size:12px;font-weight:500;line-height:1.3}
+.prod-sub{font-size:11px;color:#888;margin-top:2px}
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:999;align-items:center;justify-content:center;flex-direction:column}
+.lightbox.open{display:flex}
+.lb-img{max-width:90vw;max-height:72vh;object-fit:contain;border-radius:4px}
+.lb-name{color:#fff;margin-top:12px;font-size:13px;max-width:80vw;text-align:center}
+.lb-sub{color:#aaa;font-size:11px;margin-top:4px}
+.lb-close{position:absolute;top:16px;right:20px;color:#fff;font-size:28px;cursor:pointer;line-height:1}
+.lb-nav{display:flex;gap:16px;margin-top:14px}
+.lb-nav button{background:rgba(255,255,255,.15);color:#fff;border:none;padding:8px 18px;border-radius:4px;cursor:pointer;font-size:13px}
+.lb-nav button:hover{background:rgba(255,255,255,.3)}
+.import-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center}
+.import-overlay.open{display:flex}
+.import-box{background:#fff;border-radius:8px;width:480px;max-width:95vw;overflow:hidden}
+.import-header{background:#1565c0;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:700}
+.import-header button{background:none;border:none;color:#fff;font-size:22px;cursor:pointer}
+.import-body{padding:18px}
+.drop{border:2px dashed #ccc;border-radius:6px;padding:28px;text-align:center;cursor:pointer;background:#fafafa}
+.drop:hover,.drop.over{border-color:#1565c0;background:#e3f2fd}
+.drop input{display:none}
+.drop-icon{font-size:30px;color:#ccc;margin-bottom:8px}
+.drop p{font-size:13px;color:#888}
+.drop small{font-size:11px;color:#bbb}
+.msg{padding:10px;border-radius:4px;font-size:13px;margin-top:10px;display:none}
+.msg.ok{background:#e8f5e9;color:#2e7d32;display:block}
+.msg.err{background:#ffebee;color:#e53935;display:block}
+.save-btn{background:#2e7d32;color:#fff;border:none;padding:10px;border-radius:4px;cursor:pointer;font-size:13px;font-weight:700;width:100%;margin-top:12px}
+.save-btn:disabled{background:#aaa;cursor:not-allowed}
+.empty{padding:30px;text-align:center;color:#888;font-size:13px}
+.no-img{width:100%;aspect-ratio:1;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#bbb}
+@media(max-width:600px){.cat-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="logo">Soccer Jersey &amp; Retro Shirts</div>
+    <div class="search-bar">
+      <input type="text" id="q" placeholder="Pesquisar..." oninput="search(this.value)">
+      <button onclick="search(document.getElementById('q').value)">Pesquisa</button>
+    </div>
+    <button class="import-btn" onclick="openImport()">&#8659; Importar JSON</button>
+  </div>
+  <nav>
+    <a class="active" id="nav-home" onclick="showPage('home',this)">Início</a>
+    <a onclick="showPage('all',this)">Todas as Categorias</a>
+  </nav>
+</header>
+
+<div id="home" class="page active"><p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Categorias</p><div class="cat-grid" id="homeGrid"></div></div>
+<div id="all" class="page"><p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Todas as Categorias</p><div class="cat-grid" id="allGrid"></div></div>
+<div class="view" id="catView"><button class="back-btn" onclick="goBack()">&#8592; Voltar</button><div class="view-title" id="catTitle"></div><div class="products-grid" id="catGrid"></div></div>
+<div class="view" id="searchView"><button class="back-btn" onclick="closeSearch()">&#8592; Voltar</button><div class="view-title">Resultados</div><div class="products-grid" id="searchGrid"></div></div>
+
+<div class="lightbox" id="lb" onclick="lbBg(event)">
+  <span class="lb-close" onclick="closeLb()">&#10005;</span>
+  <img class="lb-img" id="lbImg" src="" alt="">
+  <div class="lb-name" id="lbName"></div>
+  <div class="lb-sub" id="lbSub"></div>
+  <div class="lb-nav" id="lbNav">
+    <button onclick="lbMove(-1,event)">&#8592; Anterior</button>
+    <button onclick="lbMove(1,event)">Próximo &#8594;</button>
+  </div>
+</div>
+
+<div class="import-overlay" id="importOverlay">
+  <div class="import-box">
+    <div class="import-header">
+      Importar yupoo_catalog.json
+      <button onclick="closeImport()">&#10005;</button>
+    </div>
+    <div class="import-body">
+      <div class="drop" id="drop" onclick="document.getElementById('fi').click()"
+        ondragover="dzo(event)" ondragleave="dzl()" ondrop="dzd(event)">
+        <div class="drop-icon">&#128196;</div>
+        <p>Clique ou arraste o arquivo <b>yupoo_catalog.json</b></p>
+        <small>O arquivo completo com todos os álbuns e imagens</small>
+        <input type="file" id="fi" accept=".json" onchange="loadJson(this.files[0])">
+      </div>
+      <div class="msg" id="iMsg"></div>
+      <button class="save-btn" id="saveBtn" onclick="doSave()" disabled>Carregar no Catálogo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let catalog = [];
+let pending = null;
+let prevPage = 'home';
+let lbImgs = [], lbIdx = 0, lbTitle = '';
+
+// Load from localStorage
+function load(){
+  try{ const d=localStorage.getItem('yjcat'); if(d) catalog=JSON.parse(d); }catch(e){}
+  render();
+}
+
+function save(data){
+  try{ localStorage.setItem('yjcat', JSON.stringify(data)); }catch(e){
+    // Too big — save slim version (1 img per album)
+    try{ localStorage.setItem('yjcat', JSON.stringify(data.map(a=>({...a,images:[a.images[0]]})))); }catch(e2){}
+  }
+}
+
+function largeImgs(imgs){
+  const l = imgs.filter(u=>u&&u.includes('/large.'));
+  return l.length ? l : (imgs.length ? [imgs[0]] : []);
+}
+
+function cats(){
+  const s=new Set(); catalog.forEach(a=>s.add(a.cat));
+  const order=['New Arrivals','Premier League','La Liga','Serie A','Bundesliga','Ligue 1',
+    'Brasileiro Série A','Liga Portugal','Superliga Argentina','Dutch Eredivisie','Scottish League',
+    'Liga MX','Saudi Professional League','MLS','Chile League','Japan League',
+    'UEFA Euro 2024','2026 World Cup','National Team','Retro'];
+  const res=order.filter(c=>s.has(c));
+  s.forEach(c=>{ if(!res.includes(c)) res.push(c); });
+  return res;
+}
+
+function renderCatGrid(id){
+  document.getElementById(id).innerHTML = cats().map(c=>{
+    const n=catalog.filter(a=>a.cat===c).length;
+    return `<div class="cat-item" onclick="openCat('${c.replace(/'/g,"\\'")}')">
+      <span>${c}${n?`<span class="badge">${n}</span>`:''}</span>
+      <span style="color:#bbb;font-size:11px">&#8250;</span></div>`;
+  }).join('');
+}
+
+function render(){ renderCatGrid('homeGrid'); renderCatGrid('allGrid'); }
+
+function card(a){
+  const imgs=largeImgs(a.images);
+  const img=imgs.length
+    ? `<img class="prod-img" src="${imgs[0]}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\\'no-img\\'>Sem imagem</div>'">`
+    : `<div class="no-img">Sem imagem</div>`;
+  return `<div class="prod-card" onclick="openLb('${a.albumId}')">
+    ${img}
+    <div class="prod-info">
+      <div class="prod-name">${a.album}</div>
+      ${imgs.length>1?`<div class="prod-sub">${imgs.length} fotos</div>`:''}
+    </div></div>`;
+}
+
+function openCat(cat){
+  prevPage=document.querySelector('.page.active')?.id||'home';
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.style.display='none');
+  const cv=document.getElementById('catView'); cv.style.display='block';
+  document.getElementById('catTitle').textContent=cat;
+  const items=catalog.filter(a=>a.cat===cat);
+  document.getElementById('catGrid').innerHTML=items.length
+    ? items.map(card).join('')
+    : `<div class="empty">Nenhum produto nesta categoria.<br>Importe o arquivo JSON completo.</div>`;
+}
+
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.style.display='none');
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+  if(el) el.classList.add('active');
+  prevPage=id;
+}
+
+function goBack(){
+  document.getElementById('catView').style.display='none';
+  document.getElementById(prevPage||'home').classList.add('active');
+}
+
+function search(q){
+  q=q.trim().toLowerCase();
+  if(!q){closeSearch();return;}
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.style.display='none');
+  document.getElementById('searchView').style.display='block';
+  const res=catalog.filter(a=>a.album.toLowerCase().includes(q)||a.cat.toLowerCase().includes(q));
+  document.getElementById('searchGrid').innerHTML=res.length?res.map(card).join(''):'<div class="empty">Nenhum resultado.</div>';
+}
+
+function closeSearch(){
+  document.getElementById('searchView').style.display='none';
+  document.getElementById('q').value='';
+  document.getElementById(prevPage||'home').classList.add('active');
+}
+
+function openLb(id){
+  const a=catalog.find(x=>x.albumId===id); if(!a) return;
+  lbImgs=largeImgs(a.images); lbIdx=0; lbTitle=a.album;
+  updLb(); document.getElementById('lb').classList.add('open');
+}
+function updLb(){
+  document.getElementById('lbImg').src=lbImgs[lbIdx];
+  document.getElementById('lbName').textContent=lbTitle;
+  document.getElementById('lbSub').textContent=lbImgs.length>1?`Foto ${lbIdx+1} de ${lbImgs.length}`:'';
+  document.getElementById('lbNav').style.display=lbImgs.length>1?'flex':'none';
+}
+function lbMove(d,e){e.stopPropagation();lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length;updLb();}
+function closeLb(){document.getElementById('lb').classList.remove('open');}
+function lbBg(e){if(e.target===document.getElementById('lb'))closeLb();}
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lb').classList.contains('open'))return;
+  if(e.key==='ArrowRight')lbMove(1,{stopPropagation:()=>{}});
+  if(e.key==='ArrowLeft')lbMove(-1,{stopPropagation:()=>{}});
+  if(e.key==='Escape')closeLb();
+});
+
+function openImport(){document.getElementById('importOverlay').classList.add('open');}
+function closeImport(){document.getElementById('importOverlay').classList.remove('open');pending=null;document.getElementById('saveBtn').disabled=true;msg('');}
+function dzo(e){e.preventDefault();document.getElementById('drop').classList.add('over');}
+function dzl(){document.getElementById('drop').classList.remove('over');}
+function dzd(e){e.preventDefault();dzl();if(e.dataTransfer.files[0])loadJson(e.dataTransfer.files[0]);}
+
+function loadJson(f){
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const d=JSON.parse(e.target.result);
+      if(!Array.isArray(d))throw new Error('Formato inválido');
+      pending=d;
+      msg('ok',`✓ ${d.length} álbuns lidos. Clique em "Carregar no Catálogo".`);
+      document.getElementById('saveBtn').disabled=false;
+    }catch(err){msg('err','Erro: '+err.message);}
+  };
+  r.readAsText(f);
+}
+
+function doSave(){
+  if(!pending)return;
+  const btn=document.getElementById('saveBtn');
+  btn.disabled=true; btn.textContent='Salvando...';
+  catalog=pending;
+  save(catalog);
+  render();
+  btn.textContent='Carregar no Catálogo';
+  msg('ok',`✓ ${catalog.length} álbuns carregados! Feche e navegue pelo catálogo.`);
+  setTimeout(closeImport,2000);
+}
+
+function msg(type,text){
+  const el=document.getElementById('iMsg');
+  el.className='msg'+(type?' '+type:'');
+  el.textContent=text||'';
+}
+
+load();
+</script>
+</body>
+</html>
