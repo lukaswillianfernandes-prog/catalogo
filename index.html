@@ -27,19 +27,15 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
 .back-btn:hover{background:#eee}
 .view-title{font-size:15px;font-weight:700;margin-bottom:14px}
 
-/* Clube accordion */
-.clube-section{background:#fff;border:1px solid #e0e0e0;border-radius:6px;margin-bottom:10px;overflow:hidden}
-.clube-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;transition:background .12s;gap:8px}
-.clube-header:hover{background:#f5f5f5}
-.clube-thumb{width:40px;height:40px;object-fit:cover;border-radius:4px;border:1px solid #eee;flex-shrink:0}
-.clube-thumb-placeholder{width:40px;height:40px;background:#e8f5e9;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#2e7d32;flex-shrink:0}
-.clube-info{flex:1;min-width:0}
-.clube-name{font-size:13px;font-weight:700;color:#1a1a1a}
-.clube-count{font-size:11px;color:#888;margin-top:2px}
-.clube-arrow{font-size:16px;color:#aaa;transition:transform .2s;flex-shrink:0}
-.clube-arrow.open{transform:rotate(90deg)}
-.clube-body{display:none;padding:10px 12px;border-top:1px solid #f0f0f0;background:#fafafa}
-.clube-body.open{display:block}
+/* Clube lista */
+.clube-list{background:#fff;border:1px solid #e0e0e0;border-radius:6px;overflow:hidden}
+.clube-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;border-bottom:1px solid #f0f0f0;transition:background .12s}
+.clube-item:last-child{border-bottom:none}
+.clube-item:hover{background:#e8f5e9;color:#2e7d32}
+.clube-item-name{font-size:14px;color:#222}
+.clube-item:hover .clube-item-name{color:#2e7d32}
+.clube-item-count{font-size:11px;color:#aaa}
+.clube-item-arr{font-size:16px;color:#ccc}
 .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .prod-card{background:#fff;border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;cursor:pointer;transition:box-shadow .15s}
 .prod-card:hover{box-shadow:0 3px 10px rgba(0,0,0,.13);border-color:#2e7d32}
@@ -246,34 +242,39 @@ function openCat(cat){
   });
 
   const sorted = Object.keys(clubes).sort();
-  document.getElementById('catGrid').innerHTML = sorted.map((clube, i) => {
-    const albums = clubes[clube];
-    const thumb = largeImgs(albums[0].images)[0];
-    const thumbHtml = thumb
-      ? `<img class="clube-thumb" src="${proxyUrl(thumb)}" alt="" onerror="this.outerHTML='<div class=\\'clube-thumb-placeholder\\'>${clube.substring(0,2).toUpperCase()}</div>'">`
-      : `<div class="clube-thumb-placeholder">${clube.substring(0,2).toUpperCase()}</div>`;
-    const cardsHtml = albums.map(a => card(a)).join('');
-    return `<div class="clube-section">
-      <div class="clube-header" onclick="toggleClube('clube-${i}')">
-        ${thumbHtml}
-        <div class="clube-info">
-          <div class="clube-name">${clube}</div>
-          <div class="clube-count">${albums.length} camisa(s)</div>
-        </div>
-        <span class="clube-arrow" id="arr-clube-${i}">&#8250;</span>
-      </div>
-      <div class="clube-body" id="clube-${i}">
-        <div class="products-grid">${cardsHtml}</div>
-      </div>
-    </div>`;
-  }).join('');
+  document.getElementById('catGrid').innerHTML = `<div class="clube-list">` +
+    sorted.map(clube => {
+      const n = clubes[clube].length;
+      return `<div class="clube-item" onclick="openClube('${cat.replace(/'/g,"\\'")}','${clube.replace(/'/g,"\\'")}')">
+        <span class="clube-item-name">${clube}</span>
+        <span class="clube-item-count">${n} camisa(s) &nbsp;&#8250;</span>
+      </div>`;
+    }).join('') + `</div>`;
 }
 
-function toggleClube(id){
-  const body = document.getElementById(id);
-  const arr = document.getElementById('arr-' + id);
-  body.classList.toggle('open');
-  arr.classList.toggle('open');
+function openClube(cat, clube){
+  const items = catalog.filter(a => a.cat === cat && extrairClube(a.album) === clube);
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.style.display='none');
+
+  // Cria view do clube dinamicamente
+  let clubeView = document.getElementById('clubeView');
+  if(!clubeView){
+    clubeView = document.createElement('div');
+    clubeView.className = 'view';
+    clubeView.id = 'clubeView';
+    document.body.appendChild(clubeView);
+  }
+  clubeView.style.display = 'block';
+  clubeView.innerHTML = `
+    <button class="back-btn" onclick="voltarParaCat('${cat.replace(/'/g,"\\'")}')">&#8592; Voltar</button>
+    <div class="view-title">${clube}</div>
+    <div class="products-grid">${items.map(a=>card(a)).join('')}</div>`;
+}
+
+function voltarParaCat(cat){
+  document.querySelectorAll('.view').forEach(v=>v.style.display='none');
+  document.getElementById('catView').style.display='block';
 }
 
 function showPage(id, el){
