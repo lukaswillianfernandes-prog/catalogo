@@ -26,13 +26,27 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
 .back-btn{background:none;border:1px solid #ccc;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:12px;margin-bottom:14px;color:#444}
 .back-btn:hover{background:#eee}
 .view-title{font-size:15px;font-weight:700;margin-bottom:14px}
-.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+
+/* Clube accordion */
+.clube-section{background:#fff;border:1px solid #e0e0e0;border-radius:6px;margin-bottom:10px;overflow:hidden}
+.clube-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;transition:background .12s;gap:8px}
+.clube-header:hover{background:#f5f5f5}
+.clube-thumb{width:40px;height:40px;object-fit:cover;border-radius:4px;border:1px solid #eee;flex-shrink:0}
+.clube-thumb-placeholder{width:40px;height:40px;background:#e8f5e9;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#2e7d32;flex-shrink:0}
+.clube-info{flex:1;min-width:0}
+.clube-name{font-size:13px;font-weight:700;color:#1a1a1a}
+.clube-count{font-size:11px;color:#888;margin-top:2px}
+.clube-arrow{font-size:16px;color:#aaa;transition:transform .2s;flex-shrink:0}
+.clube-arrow.open{transform:rotate(90deg)}
+.clube-body{display:none;padding:10px 12px;border-top:1px solid #f0f0f0;background:#fafafa}
+.clube-body.open{display:block}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .prod-card{background:#fff;border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;cursor:pointer;transition:box-shadow .15s}
 .prod-card:hover{box-shadow:0 3px 10px rgba(0,0,0,.13);border-color:#2e7d32}
 .prod-img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#f0f0f0}
 .prod-info{padding:8px 10px}
-.prod-name{font-size:12px;font-weight:500;line-height:1.3}
-.prod-sub{font-size:11px;color:#888;margin-top:2px}
+.prod-name{font-size:11px;font-weight:500;line-height:1.3;color:#333}
+.prod-sub{font-size:10px;color:#888;margin-top:2px}
 .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:999;align-items:center;justify-content:center;flex-direction:column}
 .lightbox.open{display:flex}
 .lb-img{max-width:90vw;max-height:72vh;object-fit:contain;border-radius:4px}
@@ -59,8 +73,8 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
   <div class="header-top">
     <div class="logo">Soccer Jersey &amp; Retro Shirts</div>
     <div class="search-bar">
-      <input type="text" id="q" placeholder="Pesquisar..." oninput="search(this.value)">
-      <button onclick="search(document.getElementById('q').value)">Pesquisa</button>
+      <input type="text" id="q" placeholder="Pesquisar camisas..." oninput="search(this.value)">
+      <button onclick="search(document.getElementById('q').value)">Pesquisar</button>
     </div>
   </div>
   <nav>
@@ -71,7 +85,7 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
 
 <div id="home" class="page active">
   <p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Categorias</p>
-  <div class="cat-grid" id="homeGrid"><div class="loading"><div class="spinner"></div><span>Carregando catálogo...</span></div></div>
+  <div class="cat-grid" id="homeGrid"><div class="loading" style="grid-column:1/-1"><div class="spinner"></div><span>Carregando catálogo...</span></div></div>
 </div>
 <div id="all" class="page">
   <p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Todas as Categorias</p>
@@ -80,11 +94,11 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
 <div class="view" id="catView">
   <button class="back-btn" onclick="goBack()">&#8592; Voltar</button>
   <div class="view-title" id="catTitle"></div>
-  <div class="products-grid" id="catGrid"></div>
+  <div id="catGrid"></div>
 </div>
 <div class="view" id="searchView">
   <button class="back-btn" onclick="closeSearch()">&#8592; Voltar</button>
-  <div class="view-title">Resultados</div>
+  <div class="view-title">Resultados da pesquisa</div>
   <div class="products-grid" id="searchGrid"></div>
 </div>
 
@@ -109,21 +123,58 @@ const IGNORAR = ['Promoções','Kids Tracksuit','Website shopping tutorial',
   'NBA Silk version','F1','NFL','MLB','NHL','Hat',"kids'",'Woman',
   'retro style 2','Baby jersey size:9-12','Kings League'];
 
-function proxyUrl(url){
-  if(!url) return '';
-  return PROXY + '?url=' + encodeURIComponent(url);
+// Traduções
+const TRAD = {
+  'Mens': 'Masculino', 'Womens': 'Feminino', 'Kids': 'Infantil',
+  'Home': 'Casa', 'Away': 'Visitante', 'Third': 'Terceiro',
+  'Fourth': 'Quarto', 'Jersey': 'Camisa', 'Kit': 'Kit',
+  'Long Sleeve': 'Manga Longa', 'Goalkeeper': 'Goleiro',
+  'Pre-Match': 'Pré-Jogo', 'Special': 'Especial', 'Retro': 'Retrô',
+  'Training': 'Treino', 'Tracksuit': 'Agasalho', 'Vest': 'Colete',
+  'Shorts': 'Shorts', 'Windbreaker': 'Corta-Vento',
+  'Anniversary': 'Aniversário', 'Leaked': 'Vazada',
+  'Player Version': 'Versão Jogador', 'Concept': 'Conceito',
+  'World Cup': 'Copa do Mundo', 'Champions': 'Campeão'
+};
+
+function traduzir(nome) {
+  // Remove HTML tags e números colados no final
+  nome = nome.replace(/<[^>]+>/g, '').trim();
+  nome = nome.replace(/(\b\w+)([\d]+)$/, '$1');
+  nome = nome.replace(/(\w)([\d]+)\s/g, '$1 ');
+  // Substitui termos em inglês
+  Object.entries(TRAD).forEach(([en, pt]) => {
+    nome = nome.replace(new RegExp('\\b' + en + '\\b', 'gi'), pt);
+  });
+  return nome.trim();
 }
 
-function cleanName(name){
-  // Remove numeros colados no final tipo "Jersey7" ou "Shorts6"
-  return name.replace(/(\w)(\d+)$/, '$1').trim();
+function extrairClube(nome) {
+  // Remove HTML e números colados
+  nome = nome.replace(/<[^>]+>/g, '').trim();
+  nome = nome.replace(/(\w)([\d]+)$/, '$1');
+  // Remove prefixos comuns
+  const prefixos = ['Mens ', 'Womens ', 'Kids ', 'Retro ', 'Masculino ', 'Feminino ', 'Infantil ', 'Retrô '];
+  prefixos.forEach(p => { if(nome.startsWith(p)) nome = nome.substring(p.length); });
+  // Pega palavras até encontrar ano ou tipo de camisa
+  const partes = nome.split(' ');
+  const keywords = ['home','away','third','fourth','jersey','kit','long','goalkeeper',
+    'pre-match','special','training','tracksuit','concept','leaked','player','2024','2025','2026','2027','1990','1991','1992','1993','1994','1995','1996','1997','1998','1999','2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023'];
+  let clube = [];
+  for(const p of partes) {
+    if(keywords.includes(p.toLowerCase()) || /^\d{4}/.test(p)) break;
+    clube.push(p);
+  }
+  return clube.join(' ').trim() || nome.split(' ').slice(0,2).join(' ');
 }
+
+function proxyUrl(url){ return url ? PROXY + '?url=' + encodeURIComponent(url) : ''; }
+function largeImgs(imgs){ const l=imgs.filter(u=>u&&u.includes('/large.')); return l.length?l:(imgs.length?[imgs[0]]:[]); }
 
 let catalog = [];
 let prevPage = 'home';
 let lbImgs = [], lbIdx = 0, lbTitle = '';
 
-// Carrega JSON do GitHub automaticamente
 async function loadCatalog(){
   try {
     const res = await fetch(JSON_URL);
@@ -132,14 +183,8 @@ async function loadCatalog(){
     render();
   } catch(e) {
     document.getElementById('homeGrid').innerHTML =
-      '<div class="empty" style="grid-column:1/-1">Erro ao carregar catálogo. Recarregue a página.</div>';
-    console.error('Erro ao carregar JSON:', e);
+      '<div class="empty" style="grid-column:1/-1">Erro ao carregar. Recarregue a página.</div>';
   }
-}
-
-function largeImgs(imgs){
-  const l = imgs.filter(u => u && u.includes('/large.'));
-  return l.length ? l : (imgs.length ? [imgs[0]] : []);
 }
 
 function cats(){
@@ -158,8 +203,8 @@ function renderCatGrid(id){
   document.getElementById(id).innerHTML = cats().map(c => {
     const n = catalog.filter(a => a.cat === c).length;
     return `<div class="cat-item" onclick="openCat('${c.replace(/'/g,"\\'")}')">
-      <span>${c}${n ? `<span class="badge">${n}</span>` : ''}</span>
-      <span style="color:#bbb;font-size:11px">&#8250;</span>
+      <span>${c}${n?`<span class="badge">${n}</span>`:''}</span>
+      <span style="color:#bbb;font-size:13px">&#8250;</span>
     </div>`;
   }).join('');
 }
@@ -169,81 +214,118 @@ function render(){ renderCatGrid('homeGrid'); renderCatGrid('allGrid'); }
 function card(a){
   const imgs = largeImgs(a.images);
   const thumb = imgs.length ? proxyUrl(imgs[0]) : '';
-  const name = cleanName(a.album);
+  const nome = traduzir(a.album);
   const img = thumb
     ? `<img class="prod-img" src="${thumb}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\\'no-img\\'>Sem imagem</div>'">`
     : `<div class="no-img">Sem imagem</div>`;
   return `<div class="prod-card" onclick="openLb('${a.albumId}')">
     ${img}
     <div class="prod-info">
-      <div class="prod-name">${name}</div>
-      ${imgs.length > 1 ? `<div class="prod-sub">${imgs.length} fotos</div>` : ''}
+      <div class="prod-name">${nome}</div>
+      ${imgs.length>1?`<div class="prod-sub">${imgs.length} fotos</div>`:''}
     </div>
   </div>`;
 }
 
 function openCat(cat){
   prevPage = document.querySelector('.page.active')?.id || 'home';
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
-  document.getElementById('catView').style.display = 'block';
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.style.display='none');
+  document.getElementById('catView').style.display='block';
   document.getElementById('catTitle').textContent = cat;
+
   const items = catalog.filter(a => a.cat === cat);
-  document.getElementById('catGrid').innerHTML = items.length
-    ? items.map(card).join('')
-    : '<div class="empty">Nenhum produto nesta categoria.</div>';
+  if(!items.length){ document.getElementById('catGrid').innerHTML='<div class="empty">Nenhum produto.</div>'; return; }
+
+  // Agrupa por clube
+  const clubes = {};
+  items.forEach(a => {
+    const clube = extrairClube(a.album);
+    if(!clubes[clube]) clubes[clube] = [];
+    clubes[clube].push(a);
+  });
+
+  const sorted = Object.keys(clubes).sort();
+  document.getElementById('catGrid').innerHTML = sorted.map((clube, i) => {
+    const albums = clubes[clube];
+    const thumb = largeImgs(albums[0].images)[0];
+    const thumbHtml = thumb
+      ? `<img class="clube-thumb" src="${proxyUrl(thumb)}" alt="" onerror="this.outerHTML='<div class=\\'clube-thumb-placeholder\\'>${clube.substring(0,2).toUpperCase()}</div>'">`
+      : `<div class="clube-thumb-placeholder">${clube.substring(0,2).toUpperCase()}</div>`;
+    const cardsHtml = albums.map(a => card(a)).join('');
+    return `<div class="clube-section">
+      <div class="clube-header" onclick="toggleClube('clube-${i}')">
+        ${thumbHtml}
+        <div class="clube-info">
+          <div class="clube-name">${clube}</div>
+          <div class="clube-count">${albums.length} camisa(s)</div>
+        </div>
+        <span class="clube-arrow" id="arr-clube-${i}">&#8250;</span>
+      </div>
+      <div class="clube-body" id="clube-${i}">
+        <div class="products-grid">${cardsHtml}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleClube(id){
+  const body = document.getElementById(id);
+  const arr = document.getElementById('arr-' + id);
+  body.classList.toggle('open');
+  arr.classList.toggle('open');
 }
 
 function showPage(id, el){
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.style.display='none');
   document.getElementById(id).classList.add('active');
-  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
   if(el) el.classList.add('active');
   prevPage = id;
 }
 
 function goBack(){
-  document.getElementById('catView').style.display = 'none';
-  document.getElementById(prevPage || 'home').classList.add('active');
+  document.getElementById('catView').style.display='none';
+  document.getElementById(prevPage||'home').classList.add('active');
 }
 
 function search(q){
   q = q.trim().toLowerCase();
   if(!q){ closeSearch(); return; }
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
-  document.getElementById('searchView').style.display = 'block';
-  const res = catalog.filter(a => a.album.toLowerCase().includes(q) || a.cat.toLowerCase().includes(q));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.style.display='none');
+  document.getElementById('searchView').style.display='block';
+  const res = catalog.filter(a => traduzir(a.album).toLowerCase().includes(q) || a.cat.toLowerCase().includes(q));
   document.getElementById('searchGrid').innerHTML = res.length
     ? res.map(card).join('')
-    : '<div class="empty">Nenhum resultado.</div>';
+    : '<div class="empty">Nenhum resultado encontrado.</div>';
 }
 
 function closeSearch(){
-  document.getElementById('searchView').style.display = 'none';
-  document.getElementById('q').value = '';
-  document.getElementById(prevPage || 'home').classList.add('active');
+  document.getElementById('searchView').style.display='none';
+  document.getElementById('q').value='';
+  document.getElementById(prevPage||'home').classList.add('active');
 }
 
 function openLb(id){
-  const a = catalog.find(x => x.albumId === id); if(!a) return;
-  lbImgs = largeImgs(a.images); lbIdx = 0; lbTitle = cleanName(a.album);
+  const a = catalog.find(x=>x.albumId===id); if(!a) return;
+  lbImgs = largeImgs(a.images); lbIdx = 0; lbTitle = traduzir(a.album);
   updLb(); document.getElementById('lb').classList.add('open');
 }
 
 function updLb(){
   document.getElementById('lbImg').src = proxyUrl(lbImgs[lbIdx]);
   document.getElementById('lbName').textContent = lbTitle;
-  document.getElementById('lbSub').textContent = lbImgs.length > 1 ? `Foto ${lbIdx+1} de ${lbImgs.length}` : '';
-  document.getElementById('lbNav').style.display = lbImgs.length > 1 ? 'flex' : 'none';
+  document.getElementById('lbSub').textContent = lbImgs.length>1 ? `Foto ${lbIdx+1} de ${lbImgs.length}` : '';
+  document.getElementById('lbNav').style.display = lbImgs.length>1 ? 'flex' : 'none';
 }
 
-function lbMove(d, e){ e.stopPropagation(); lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length; updLb(); }
+function lbMove(d,e){ e.stopPropagation(); lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length; updLb(); }
 function closeLb(){ document.getElementById('lb').classList.remove('open'); }
 function lbBg(e){ if(e.target===document.getElementById('lb')) closeLb(); }
 
-document.addEventListener('keydown', e => {
+document.addEventListener('keydown', e=>{
   if(!document.getElementById('lb').classList.contains('open')) return;
   if(e.key==='ArrowRight') lbMove(1,{stopPropagation:()=>{}});
   if(e.key==='ArrowLeft') lbMove(-1,{stopPropagation:()=>{}});
