@@ -23,40 +23,45 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
 .cat-item{padding:12px 14px;font-size:13px;color:#222;cursor:pointer;border-right:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center;transition:background .12s}
 .cat-item:hover{background:#e8f5e9;color:#2e7d32}
 .badge{background:#e8f5e9;color:#2e7d32;font-size:10px;padding:1px 6px;border-radius:3px;margin-left:5px}
-.back-btn{background:none;border:1px solid #ccc;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:12px;margin-bottom:14px;color:#444}
+.back-btn{background:none;border:1px solid #ccc;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:12px;margin-bottom:12px;color:#444}
 .back-btn:hover{background:#eee}
-.view-title{font-size:15px;font-weight:700;margin-bottom:14px}
+.view-title{font-size:15px;font-weight:700;margin-bottom:10px}
 
-/* Clube lista */
-.clube-list{background:#fff;border:1px solid #e0e0e0;border-radius:6px;overflow:hidden}
-.clube-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;border-bottom:1px solid #f0f0f0;transition:background .12s}
-.clube-item:last-child{border-bottom:none}
-.clube-item:hover{background:#e8f5e9;color:#2e7d32}
-.clube-item-name{font-size:14px;color:#222}
-.clube-item:hover .clube-item-name{color:#2e7d32}
-.clube-item-count{font-size:11px;color:#aaa}
-.clube-item-arr{font-size:16px;color:#ccc}
-.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+/* Filtro de clubes */
+.clubes-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;background:#fff;padding:12px;border:1px solid #e0e0e0;border-radius:6px}
+.clube-tag{padding:6px 14px;border:1px solid #ddd;border-radius:20px;font-size:12px;cursor:pointer;background:#fff;color:#444;transition:all .12s;white-space:nowrap}
+.clube-tag:hover{border-color:#2e7d32;color:#2e7d32}
+.clube-tag.active{background:#2e7d32;color:#fff;border-color:#2e7d32}
+
+/* Contagem */
+.result-count{font-size:12px;color:#888;margin-bottom:12px}
+
+/* Grid de produtos */
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
 .prod-card{background:#fff;border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;cursor:pointer;transition:box-shadow .15s}
 .prod-card:hover{box-shadow:0 3px 10px rgba(0,0,0,.13);border-color:#2e7d32}
 .prod-img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#f0f0f0}
 .prod-info{padding:8px 10px}
-.prod-name{font-size:11px;font-weight:500;line-height:1.3;color:#333}
+.prod-name{font-size:11px;font-weight:500;line-height:1.4;color:#333}
 .prod-sub{font-size:10px;color:#888;margin-top:2px}
-.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:999;align-items:center;justify-content:center;flex-direction:column}
+
+/* Lightbox */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:999;align-items:center;justify-content:center;flex-direction:column}
 .lightbox.open{display:flex}
-.lb-img{max-width:90vw;max-height:72vh;object-fit:contain;border-radius:4px}
-.lb-name{color:#fff;margin-top:12px;font-size:13px;max-width:80vw;text-align:center}
+.lb-img{max-width:92vw;max-height:74vh;object-fit:contain;border-radius:4px}
+.lb-name{color:#fff;margin-top:12px;font-size:13px;max-width:85vw;text-align:center;line-height:1.4}
 .lb-sub{color:#aaa;font-size:11px;margin-top:4px}
 .lb-close{position:absolute;top:16px;right:20px;color:#fff;font-size:28px;cursor:pointer;line-height:1}
 .lb-nav{display:flex;gap:16px;margin-top:14px}
-.lb-nav button{background:rgba(255,255,255,.15);color:#fff;border:none;padding:8px 18px;border-radius:4px;cursor:pointer;font-size:13px}
+.lb-nav button{background:rgba(255,255,255,.15);color:#fff;border:none;padding:8px 20px;border-radius:4px;cursor:pointer;font-size:13px}
 .lb-nav button:hover{background:rgba(255,255,255,.3)}
+
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;color:#888;gap:16px}
 .spinner{width:40px;height:40px;border:4px solid #e0e0e0;border-top-color:#2e7d32;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .no-img{width:100%;aspect-ratio:1;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#bbb}
 .empty{padding:30px;text-align:center;color:#888;font-size:13px}
+
 @media(max-width:600px){
   .cat-grid{grid-template-columns:repeat(2,1fr)}
   .products-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
@@ -87,11 +92,15 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
   <p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Todas as Categorias</p>
   <div class="cat-grid" id="allGrid"></div>
 </div>
+
 <div class="view" id="catView">
   <button class="back-btn" onclick="goBack()">&#8592; Voltar</button>
   <div class="view-title" id="catTitle"></div>
-  <div id="catGrid"></div>
+  <div class="clubes-wrap" id="clubesTags"></div>
+  <div class="result-count" id="resultCount"></div>
+  <div class="products-grid" id="catGrid"></div>
 </div>
+
 <div class="view" id="searchView">
   <button class="back-btn" onclick="closeSearch()">&#8592; Voltar</button>
   <div class="view-title">Resultados da pesquisa</div>
@@ -119,85 +128,86 @@ const IGNORAR = ['Promoções','Kids Tracksuit','Website shopping tutorial',
   'NBA Silk version','F1','NFL','MLB','NHL','Hat',"kids'",'Woman',
   'retro style 2','Baby jersey size:9-12','Kings League'];
 
-// Traduções
 const TRAD = {
-  'Mens': 'Masculino', 'Womens': 'Feminino', 'Kids': 'Infantil',
-  'Home': 'Casa', 'Away': 'Visitante', 'Third': 'Terceiro',
-  'Fourth': 'Quarto', 'Jersey': 'Camisa', 'Kit': 'Kit',
-  'Long Sleeve': 'Manga Longa', 'Goalkeeper': 'Goleiro',
-  'Pre-Match': 'Pré-Jogo', 'Special': 'Especial', 'Retro': 'Retrô',
-  'Training': 'Treino', 'Tracksuit': 'Agasalho', 'Vest': 'Colete',
-  'Shorts': 'Shorts', 'Windbreaker': 'Corta-Vento',
-  'Anniversary': 'Aniversário', 'Leaked': 'Vazada',
-  'Player Version': 'Versão Jogador', 'Concept': 'Conceito',
-  'World Cup': 'Copa do Mundo', 'Champions': 'Campeão'
+  'Mens':'Masculino','Womens':'Feminino','Kids':'Infantil',
+  'Home':'Casa','Away':'Visitante','Third':'Terceiro','Fourth':'Quarto',
+  'Jersey':'Camisa','Kit':'Kit','Long Sleeve':'Manga Longa',
+  'Goalkeeper':'Goleiro','Pre-Match':'Pré-Jogo','Special':'Especial',
+  'Retro':'Retrô','Training':'Treino','Tracksuit':'Agasalho',
+  'Vest':'Colete','Anniversary':'Aniversário','Leaked':'Vazada',
+  'Player Version':'Versão Jogador','Concept':'Conceito',
+  'World Cup':'Copa do Mundo','Champions':'Campeão','Cropped':'Cropped'
 };
 
-function traduzir(nome) {
-  // Remove HTML tags e números colados no final
-  nome = nome.replace(/<[^>]+>/g, '').trim();
-  nome = nome.replace(/(\b\w+)([\d]+)$/, '$1');
-  nome = nome.replace(/(\w)([\d]+)\s/g, '$1 ');
-  // Substitui termos em inglês
-  Object.entries(TRAD).forEach(([en, pt]) => {
-    nome = nome.replace(new RegExp('\\b' + en + '\\b', 'gi'), pt);
+function traduzir(nome){
+  nome = nome.replace(/<[^>]+>/g,'').trim();
+  nome = nome.replace(/\b(\w+?)(\d+)$/,'$1');
+  nome = nome.replace(/(\w)(\d+)\s/g,'$1 ');
+  Object.entries(TRAD).forEach(([en,pt])=>{
+    nome = nome.replace(new RegExp('\\b'+en+'\\b','gi'),pt);
   });
   return nome.trim();
 }
 
-function extrairClube(nome) {
-  // Remove HTML e números colados
-  nome = nome.replace(/<[^>]+>/g, '').trim();
-  nome = nome.replace(/(\w)([\d]+)$/, '$1');
-  // Remove prefixos comuns
-  const prefixos = ['Mens ', 'Womens ', 'Kids ', 'Retro ', 'Masculino ', 'Feminino ', 'Infantil ', 'Retrô '];
-  prefixos.forEach(p => { if(nome.startsWith(p)) nome = nome.substring(p.length); });
-  // Pega palavras até encontrar ano ou tipo de camisa
-  const partes = nome.split(' ');
+function extrairClube(nome){
+  nome = nome.replace(/<[^>]+>/g,'').trim();
+  nome = nome.replace(/\b(\w+?)(\d+)$/,'$1');
+  const prefixos = ['Mens ','Womens ','Kids ','Retro '];
+  prefixos.forEach(p=>{ if(nome.startsWith(p)) nome=nome.substring(p.length); });
   const keywords = ['home','away','third','fourth','jersey','kit','long','goalkeeper',
-    'pre-match','special','training','tracksuit','concept','leaked','player','2024','2025','2026','2027','1990','1991','1992','1993','1994','1995','1996','1997','1998','1999','2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023'];
-  let clube = [];
-  for(const p of partes) {
-    if(keywords.includes(p.toLowerCase()) || /^\d{4}/.test(p)) break;
+    'pre-match','special','training','tracksuit','concept','leaked','player','cropped',
+    '2024','2025','2026','2027','2023','2022','2021','2020','2019','2018','2017','2016',
+    '2015','2014','2013','2012','2011','2010','2009','2008','2007','2006','2005','2004',
+    '2003','2002','2001','2000','1999','1998','1997','1996','1995','1994','1993','1992','1991','1990'];
+  const partes = nome.split(' ');
+  const clube = [];
+  for(const p of partes){
+    if(keywords.includes(p.toLowerCase())||/^\d{4}/.test(p)) break;
     clube.push(p);
   }
   return clube.join(' ').trim() || nome.split(' ').slice(0,2).join(' ');
 }
 
-function proxyUrl(url){ return url ? PROXY + '?url=' + encodeURIComponent(url) : ''; }
+function extrairAno(nome){
+  nome = nome.replace(/<[^>]+>/g,'');
+  const m = nome.match(/(\d{4})/g);
+  if(!m) return 0;
+  return Math.max(...m.map(Number));
+}
+
+function proxyUrl(url){ return url?PROXY+'?url='+encodeURIComponent(url):''; }
 function largeImgs(imgs){ const l=imgs.filter(u=>u&&u.includes('/large.')); return l.length?l:(imgs.length?[imgs[0]]:[]); }
 
-let catalog = [];
-let prevPage = 'home';
-let lbImgs = [], lbIdx = 0, lbTitle = '';
+let catalog=[], prevPage='home', lbImgs=[], lbIdx=0, lbTitle='';
+let currentCat='', currentClube='Todos';
 
 async function loadCatalog(){
-  try {
+  try{
     const res = await fetch(JSON_URL);
-    if(!res.ok) throw new Error('HTTP ' + res.status);
+    if(!res.ok) throw new Error('HTTP '+res.status);
     catalog = await res.json();
     render();
-  } catch(e) {
-    document.getElementById('homeGrid').innerHTML =
+  }catch(e){
+    document.getElementById('homeGrid').innerHTML=
       '<div class="empty" style="grid-column:1/-1">Erro ao carregar. Recarregue a página.</div>';
   }
 }
 
 function cats(){
-  const s = new Set();
-  catalog.forEach(a => { if(!IGNORAR.includes(a.cat)) s.add(a.cat); });
-  const order = ['New Arrivals','Premier League','La Liga','Serie A','Bundesliga','Ligue 1',
+  const s=new Set();
+  catalog.forEach(a=>{ if(!IGNORAR.includes(a.cat)) s.add(a.cat); });
+  const order=['New Arrivals','Premier League','La Liga','Serie A','Bundesliga','Ligue 1',
     'Brasileiro Série A','Liga Portugal','Superliga Argentina','Dutch Eredivisie','Scottish League',
     'Liga MX','Saudi Professional League','MLS','Chile League','Japan League',
     'UEFA Euro 2024','2026 World Cup','National Team','Retro'];
-  const res = order.filter(c => s.has(c));
-  s.forEach(c => { if(!res.includes(c)) res.push(c); });
+  const res=order.filter(c=>s.has(c));
+  s.forEach(c=>{ if(!res.includes(c)) res.push(c); });
   return res;
 }
 
 function renderCatGrid(id){
-  document.getElementById(id).innerHTML = cats().map(c => {
-    const n = catalog.filter(a => a.cat === c).length;
+  document.getElementById(id).innerHTML=cats().map(c=>{
+    const n=catalog.filter(a=>a.cat===c).length;
     return `<div class="cat-item" onclick="openCat('${c.replace(/'/g,"\\'")}')">
       <span>${c}${n?`<span class="badge">${n}</span>`:''}</span>
       <span style="color:#bbb;font-size:13px">&#8250;</span>
@@ -208,12 +218,12 @@ function renderCatGrid(id){
 function render(){ renderCatGrid('homeGrid'); renderCatGrid('allGrid'); }
 
 function card(a){
-  const imgs = largeImgs(a.images);
-  const thumb = imgs.length ? proxyUrl(imgs[0]) : '';
-  const nome = traduzir(a.album);
-  const img = thumb
-    ? `<img class="prod-img" src="${thumb}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\\'no-img\\'>Sem imagem</div>'">`
-    : `<div class="no-img">Sem imagem</div>`;
+  const imgs=largeImgs(a.images);
+  const thumb=imgs.length?proxyUrl(imgs[0]):'';
+  const nome=traduzir(a.album);
+  const img=thumb
+    ?`<img class="prod-img" src="${thumb}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\\'no-img\\'>Sem imagem</div>'">`
+    :`<div class="no-img">Sem imagem</div>`;
   return `<div class="prod-card" onclick="openLb('${a.albumId}')">
     ${img}
     <div class="prod-info">
@@ -224,66 +234,59 @@ function card(a){
 }
 
 function openCat(cat){
-  prevPage = document.querySelector('.page.active')?.id || 'home';
+  currentCat=cat;
+  currentClube='Todos';
+  prevPage=document.querySelector('.page.active')?.id||'home';
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.style.display='none');
   document.getElementById('catView').style.display='block';
-  document.getElementById('catTitle').textContent = cat;
-
-  const items = catalog.filter(a => a.cat === cat);
-  if(!items.length){ document.getElementById('catGrid').innerHTML='<div class="empty">Nenhum produto.</div>'; return; }
-
-  // Agrupa por clube
-  const clubes = {};
-  items.forEach(a => {
-    const clube = extrairClube(a.album);
-    if(!clubes[clube]) clubes[clube] = [];
-    clubes[clube].push(a);
-  });
-
-  const sorted = Object.keys(clubes).sort();
-  document.getElementById('catGrid').innerHTML = `<div class="clube-list">` +
-    sorted.map(clube => {
-      const n = clubes[clube].length;
-      return `<div class="clube-item" onclick="openClube('${cat.replace(/'/g,"\\'")}','${clube.replace(/'/g,"\\'")}')">
-        <span class="clube-item-name">${clube}</span>
-        <span class="clube-item-count">${n} camisa(s) &nbsp;&#8250;</span>
-      </div>`;
-    }).join('') + `</div>`;
+  document.getElementById('catTitle').textContent=cat;
+  renderCatView();
 }
 
-function openClube(cat, clube){
-  const items = catalog.filter(a => a.cat === cat && extrairClube(a.album) === clube);
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v=>v.style.display='none');
+function renderCatView(){
+  const items=catalog.filter(a=>a.cat===currentCat);
 
-  // Cria view do clube dinamicamente
-  let clubeView = document.getElementById('clubeView');
-  if(!clubeView){
-    clubeView = document.createElement('div');
-    clubeView.className = 'view';
-    clubeView.id = 'clubeView';
-    document.body.appendChild(clubeView);
-  }
-  clubeView.style.display = 'block';
-  clubeView.innerHTML = `
-    <button class="back-btn" onclick="voltarParaCat('${cat.replace(/'/g,"\\'")}')">&#8592; Voltar</button>
-    <div class="view-title">${clube}</div>
-    <div class="products-grid">${items.map(a=>card(a)).join('')}</div>`;
+  // Extrai clubes únicos ordenados
+  const clubeSet=new Set();
+  items.forEach(a=>clubeSet.add(extrairClube(a.album)));
+  const clubes=['Todos',...Array.from(clubeSet).sort()];
+
+  // Renderiza tags de clubes
+  document.getElementById('clubesTags').innerHTML=clubes.map(c=>
+    `<span class="clube-tag${c===currentClube?' active':''}" onclick="filtrarClube('${c.replace(/'/g,"\\'")}')">
+      ${c}
+    </span>`
+  ).join('');
+
+  // Filtra por clube selecionado
+  let filtrados=currentClube==='Todos'
+    ?items
+    :items.filter(a=>extrairClube(a.album)===currentClube);
+
+  // Ordena do mais recente para o mais antigo
+  filtrados=filtrados.sort((a,b)=>extrairAno(b.album)-extrairAno(a.album));
+
+  document.getElementById('resultCount').textContent=filtrados.length+' camisa(s) encontrada(s)';
+  document.getElementById('catGrid').innerHTML=filtrados.length
+    ?filtrados.map(a=>card(a)).join('')
+    :'<div class="empty">Nenhuma camisa encontrada.</div>';
 }
 
-function voltarParaCat(cat){
-  document.querySelectorAll('.view').forEach(v=>v.style.display='none');
-  document.getElementById('catView').style.display='block';
+function filtrarClube(clube){
+  currentClube=clube;
+  renderCatView();
+  // Scroll para o topo das camisas
+  document.getElementById('catGrid').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-function showPage(id, el){
+function showPage(id,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.style.display='none');
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
   if(el) el.classList.add('active');
-  prevPage = id;
+  prevPage=id;
 }
 
 function goBack(){
@@ -292,15 +295,16 @@ function goBack(){
 }
 
 function search(q){
-  q = q.trim().toLowerCase();
-  if(!q){ closeSearch(); return; }
+  q=q.trim().toLowerCase();
+  if(!q){closeSearch();return;}
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.style.display='none');
   document.getElementById('searchView').style.display='block';
-  const res = catalog.filter(a => traduzir(a.album).toLowerCase().includes(q) || a.cat.toLowerCase().includes(q));
-  document.getElementById('searchGrid').innerHTML = res.length
-    ? res.map(card).join('')
-    : '<div class="empty">Nenhum resultado encontrado.</div>';
+  const res=catalog.filter(a=>traduzir(a.album).toLowerCase().includes(q)||a.cat.toLowerCase().includes(q));
+  const sorted=res.sort((a,b)=>extrairAno(b.album)-extrairAno(a.album));
+  document.getElementById('searchGrid').innerHTML=sorted.length
+    ?sorted.map(a=>card(a)).join('')
+    :'<div class="empty">Nenhum resultado encontrado.</div>';
 }
 
 function closeSearch(){
@@ -310,27 +314,24 @@ function closeSearch(){
 }
 
 function openLb(id){
-  const a = catalog.find(x=>x.albumId===id); if(!a) return;
-  lbImgs = largeImgs(a.images); lbIdx = 0; lbTitle = traduzir(a.album);
-  updLb(); document.getElementById('lb').classList.add('open');
+  const a=catalog.find(x=>x.albumId===id);if(!a)return;
+  lbImgs=largeImgs(a.images);lbIdx=0;lbTitle=traduzir(a.album);
+  updLb();document.getElementById('lb').classList.add('open');
 }
-
 function updLb(){
-  document.getElementById('lbImg').src = proxyUrl(lbImgs[lbIdx]);
-  document.getElementById('lbName').textContent = lbTitle;
-  document.getElementById('lbSub').textContent = lbImgs.length>1 ? `Foto ${lbIdx+1} de ${lbImgs.length}` : '';
-  document.getElementById('lbNav').style.display = lbImgs.length>1 ? 'flex' : 'none';
+  document.getElementById('lbImg').src=proxyUrl(lbImgs[lbIdx]);
+  document.getElementById('lbName').textContent=lbTitle;
+  document.getElementById('lbSub').textContent=lbImgs.length>1?`Foto ${lbIdx+1} de ${lbImgs.length}`:'';
+  document.getElementById('lbNav').style.display=lbImgs.length>1?'flex':'none';
 }
-
-function lbMove(d,e){ e.stopPropagation(); lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length; updLb(); }
-function closeLb(){ document.getElementById('lb').classList.remove('open'); }
-function lbBg(e){ if(e.target===document.getElementById('lb')) closeLb(); }
-
-document.addEventListener('keydown', e=>{
-  if(!document.getElementById('lb').classList.contains('open')) return;
-  if(e.key==='ArrowRight') lbMove(1,{stopPropagation:()=>{}});
-  if(e.key==='ArrowLeft') lbMove(-1,{stopPropagation:()=>{}});
-  if(e.key==='Escape') closeLb();
+function lbMove(d,e){e.stopPropagation();lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length;updLb();}
+function closeLb(){document.getElementById('lb').classList.remove('open');}
+function lbBg(e){if(e.target===document.getElementById('lb'))closeLb();}
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lb').classList.contains('open'))return;
+  if(e.key==='ArrowRight')lbMove(1,{stopPropagation:()=>{}});
+  if(e.key==='ArrowLeft')lbMove(-1,{stopPropagation:()=>{}});
+  if(e.key==='Escape')closeLb();
 });
 
 loadCatalog();
