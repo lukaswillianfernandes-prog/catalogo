@@ -140,31 +140,11 @@ function proxyUrl(u){ return u ? PROXY+'?url='+encodeURIComponent(u) : ''; }
 // Remove HTML tags e números colados no final
 function cleanName(n){
   if(!n) return '';
+  // Remove tags HTML
   n = n.replace(/<[^>]+>/g,'').trim();
-  // Remove tamanhos colados no final ex: "JerseyS-XXL12" → "Jersey"
-  n = n.replace(/\s*S-\w+\d*$/i,'').trim();
-  // Remove numero colado no final ex: "Jersey9" → "Jersey"
+  // Remove numero colado no final (ex: "Jersey9" → "Jersey", "Shorts6" → "Shorts")
   n = n.replace(/([a-zA-Z])(\d+)$/,'$1').trim();
   return n;
-}
-
-// Verifica se produto deve ser filtrado
-function shouldFilter(name){
-  const n = name.toLowerCase();
-  const blocked = ['windbreaker','shorts','keychain','chaveiro','keyring'];
-  // Filtra se contém palavras bloqueadas
-  if(blocked.some(b => n.includes(b))) return true;
-  // Filtra chaveiros: produtos sem ano e sem palavras como jersey/shirt/kit/away/home
-  const hasYear = /\d{4}/.test(name);
-  const hasType = /(jersey|shirt|kit|away|home|retro|special|goalkeeper|pre.match|training)/i.test(name);
-  if(!hasYear && !hasType) return true;
-  return false;
-}
-
-// Extrai ano do nome para ordenação
-function extractYear(name){
-  const m = name.match(/(\d{4})/);
-  return m ? parseInt(m[1]) : 0;
 }
 
 // Extrai nome do clube do título do produto
@@ -261,15 +241,9 @@ function openCat(cat){
     return;
   }
 
-  // Filtra windbreakers, shorts e chaveiros
-  const filtered = items.filter(a => !shouldFilter(cleanName(a.album)));
-
-  // Ordena por ano mais recente primeiro
-  filtered.sort((a, b) => extractYear(cleanName(b.album)) - extractYear(cleanName(a.album)));
-
   // Agrupa por clube
   const clubMap = {};
-  filtered.forEach(a => {
+  items.forEach(a => {
     const club = extractClub(a.album);
     if(!clubMap[club]) clubMap[club] = [];
     clubMap[club].push(a);
