@@ -19,20 +19,42 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
 .page{display:none;padding:16px}
 .page.active{display:block}
 .view{display:none;padding:16px}
+
+/* Category grid */
 .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border:1px solid #e0e0e0}
 .cat-item{padding:12px 14px;font-size:13px;color:#222;cursor:pointer;border-right:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center;transition:background .12s}
 .cat-item:hover{background:#e8f5e9;color:#2e7d32}
 .badge{background:#e8f5e9;color:#2e7d32;font-size:10px;padding:1px 6px;border-radius:3px;margin-left:5px}
+
+/* Back & title */
 .back-btn{background:none;border:1px solid #ccc;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:12px;margin-bottom:14px;color:#444}
 .back-btn:hover{background:#eee}
 .view-title{font-size:15px;font-weight:700;margin-bottom:14px}
-.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+
+/* Club accordion */
+.club-list{display:flex;flex-direction:column;gap:8px}
+.club-row{background:#fff;border:1px solid #e0e0e0;border-radius:6px;overflow:hidden}
+.club-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;transition:background .12s;user-select:none}
+.club-header:hover{background:#f5f5f5}
+.club-header.open{background:#e8f5e9;border-bottom:1px solid #e0e0e0}
+.club-name{font-size:13px;font-weight:700;color:#222;display:flex;align-items:center;gap:8px}
+.club-count{font-size:11px;color:#888;font-weight:400}
+.club-arrow{font-size:14px;color:#888;transition:transform .2s}
+.club-header.open .club-arrow{transform:rotate(90deg);color:#2e7d32}
+.club-body{display:none;padding:12px}
+.club-body.open{display:block}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+
+/* Product card */
 .prod-card{background:#fff;border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;cursor:pointer;transition:box-shadow .15s}
 .prod-card:hover{box-shadow:0 3px 10px rgba(0,0,0,.13);border-color:#2e7d32}
 .prod-img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#f0f0f0}
-.prod-info{padding:8px 10px}
-.prod-name{font-size:12px;font-weight:500;line-height:1.3}
-.prod-sub{font-size:11px;color:#888;margin-top:2px}
+.prod-info{padding:7px 9px}
+.prod-name{font-size:11px;font-weight:500;line-height:1.3;color:#222}
+.prod-sub{font-size:10px;color:#888;margin-top:2px}
+.no-img{width:100%;aspect-ratio:1;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#bbb}
+
+/* Lightbox */
 .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:999;align-items:center;justify-content:center;flex-direction:column}
 .lightbox.open{display:flex}
 .lb-img{max-width:90vw;max-height:72vh;object-fit:contain;border-radius:4px}
@@ -42,14 +64,16 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
 .lb-nav{display:flex;gap:16px;margin-top:14px}
 .lb-nav button{background:rgba(255,255,255,.15);color:#fff;border:none;padding:8px 18px;border-radius:4px;cursor:pointer;font-size:13px}
 .lb-nav button:hover{background:rgba(255,255,255,.3)}
+
+/* Loading */
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;color:#888;gap:16px}
 .spinner{width:40px;height:40px;border:4px solid #e0e0e0;border-top-color:#2e7d32;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.no-img{width:100%;aspect-ratio:1;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#bbb}
 .empty{padding:30px;text-align:center;color:#888;font-size:13px}
+
 @media(max-width:600px){
   .cat-grid{grid-template-columns:repeat(2,1fr)}
-  .products-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+  .products-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
 }
 </style>
 </head>
@@ -71,20 +95,22 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
 
 <div id="home" class="page active">
   <p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Categorias</p>
-  <div class="cat-grid" id="homeGrid"><div class="loading"><div class="spinner"></div><span>Carregando catálogo...</span></div></div>
+  <div class="cat-grid" id="homeGrid"><div class="loading" style="grid-column:1/-1"><div class="spinner"></div><span>Carregando...</span></div></div>
 </div>
 <div id="all" class="page">
   <p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Todas as Categorias</p>
   <div class="cat-grid" id="allGrid"></div>
 </div>
+
 <div class="view" id="catView">
   <button class="back-btn" onclick="goBack()">&#8592; Voltar</button>
   <div class="view-title" id="catTitle"></div>
-  <div class="products-grid" id="catGrid"></div>
+  <div class="club-list" id="clubList"></div>
 </div>
+
 <div class="view" id="searchView">
   <button class="back-btn" onclick="closeSearch()">&#8592; Voltar</button>
-  <div class="view-title">Resultados</div>
+  <div class="view-title">Resultados da pesquisa</div>
   <div class="products-grid" id="searchGrid"></div>
 </div>
 
@@ -109,31 +135,71 @@ const IGNORAR = ['Promoções','Kids Tracksuit','Website shopping tutorial',
   'NBA Silk version','F1','NFL','MLB','NHL','Hat',"kids'",'Woman',
   'retro style 2','Baby jersey size:9-12','Kings League'];
 
-function proxyUrl(url){
-  if(!url) return '';
-  return PROXY + '?url=' + encodeURIComponent(url);
+function proxyUrl(u){ return u ? PROXY+'?url='+encodeURIComponent(u) : ''; }
+
+// Remove HTML tags e números colados no final
+function cleanName(n){
+  if(!n) return '';
+  n = n.replace(/<[^>]+>/g,'').trim();
+  // Remove tamanhos colados no final ex: "JerseyS-XXL12" → "Jersey"
+  n = n.replace(/\s*S-\w+\d*$/i,'').trim();
+  // Remove numero colado no final ex: "Jersey9" → "Jersey"
+  n = n.replace(/([a-zA-Z])(\d+)$/,'$1').trim();
+  return n;
 }
 
-function cleanName(name){
-  // Remove numeros colados no final tipo "Jersey7" ou "Shorts6"
-  return name.replace(/(\w)(\d+)$/, '$1').trim();
+// Verifica se produto deve ser filtrado
+function shouldFilter(name){
+  const n = name.toLowerCase();
+  const blocked = ['windbreaker','shorts','keychain','chaveiro','keyring'];
+  // Filtra se contém palavras bloqueadas
+  if(blocked.some(b => n.includes(b))) return true;
+  // Filtra chaveiros: produtos sem ano e sem palavras como jersey/shirt/kit/away/home
+  const hasYear = /\d{4}/.test(name);
+  const hasType = /(jersey|shirt|kit|away|home|retro|special|goalkeeper|pre.match|training)/i.test(name);
+  if(!hasYear && !hasType) return true;
+  return false;
+}
+
+// Extrai ano do nome para ordenação
+function extractYear(name){
+  const m = name.match(/(\d{4})/);
+  return m ? parseInt(m[1]) : 0;
+}
+
+// Extrai nome do clube do título do produto
+// Ex: "Mens Arsenal 2026/27 Home Jersey" → "Arsenal"
+// Ex: "Retro Barcelona 2014/15 Away" → "Barcelona"
+// Ex: "Kids Real Madrid 2025/26 Kit" → "Real Madrid"
+function extractClub(name){
+  name = cleanName(name);
+  // Remove prefixos comuns
+  const prefixes = ['Mens ','Womens ','Kids ','Retro ','Youth '];
+  let n = name;
+  for(const p of prefixes){
+    if(n.startsWith(p)) n = n.substring(p.length);
+  }
+  // Pega palavras antes do ano (ex: 2025, 2026, 1998)
+  const yearMatch = n.match(/^(.*?)\s+\d{4}/);
+  if(yearMatch && yearMatch[1].trim().length > 0) return yearMatch[1].trim();
+  // Se não achou ano, pega as 2 primeiras palavras
+  const words = n.split(' ');
+  return words.slice(0, Math.min(2, words.length)).join(' ');
 }
 
 let catalog = [];
 let prevPage = 'home';
 let lbImgs = [], lbIdx = 0, lbTitle = '';
 
-// Carrega JSON do GitHub automaticamente
 async function loadCatalog(){
-  try {
+  try{
     const res = await fetch(JSON_URL);
-    if(!res.ok) throw new Error('HTTP ' + res.status);
+    if(!res.ok) throw new Error('HTTP '+res.status);
     catalog = await res.json();
     render();
-  } catch(e) {
+  }catch(e){
     document.getElementById('homeGrid').innerHTML =
-      '<div class="empty" style="grid-column:1/-1">Erro ao carregar catálogo. Recarregue a página.</div>';
-    console.error('Erro ao carregar JSON:', e);
+      '<div class="empty" style="grid-column:1/-1">Erro ao carregar. Recarregue a página.</div>';
   }
 }
 
@@ -158,15 +224,15 @@ function renderCatGrid(id){
   document.getElementById(id).innerHTML = cats().map(c => {
     const n = catalog.filter(a => a.cat === c).length;
     return `<div class="cat-item" onclick="openCat('${c.replace(/'/g,"\\'")}')">
-      <span>${c}${n ? `<span class="badge">${n}</span>` : ''}</span>
-      <span style="color:#bbb;font-size:11px">&#8250;</span>
+      <span>${c}${n?`<span class="badge">${n}</span>`:''}</span>
+      <span style="color:#bbb;font-size:13px">&#8250;</span>
     </div>`;
   }).join('');
 }
 
 function render(){ renderCatGrid('homeGrid'); renderCatGrid('allGrid'); }
 
-function card(a){
+function prodCard(a){
   const imgs = largeImgs(a.images);
   const thumb = imgs.length ? proxyUrl(imgs[0]) : '';
   const name = cleanName(a.album);
@@ -177,7 +243,7 @@ function card(a){
     ${img}
     <div class="prod-info">
       <div class="prod-name">${name}</div>
-      ${imgs.length > 1 ? `<div class="prod-sub">${imgs.length} fotos</div>` : ''}
+      ${imgs.length>1?`<div class="prod-sub">${imgs.length} fotos</div>`:''}
     </div>
   </div>`;
 }
@@ -185,18 +251,61 @@ function card(a){
 function openCat(cat){
   prevPage = document.querySelector('.page.active')?.id || 'home';
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+  document.querySelectorAll('.view').forEach(v => v.style.display='none');
   document.getElementById('catView').style.display = 'block';
   document.getElementById('catTitle').textContent = cat;
+
   const items = catalog.filter(a => a.cat === cat);
-  document.getElementById('catGrid').innerHTML = items.length
-    ? items.map(card).join('')
-    : '<div class="empty">Nenhum produto nesta categoria.</div>';
+  if(!items.length){
+    document.getElementById('clubList').innerHTML = '<div class="empty">Nenhum produto.</div>';
+    return;
+  }
+
+  // Filtra windbreakers, shorts e chaveiros
+  const filtered = items.filter(a => !shouldFilter(cleanName(a.album)));
+
+  // Ordena por ano mais recente primeiro
+  filtered.sort((a, b) => extractYear(cleanName(b.album)) - extractYear(cleanName(a.album)));
+
+  // Agrupa por clube
+  const clubMap = {};
+  filtered.forEach(a => {
+    const club = extractClub(a.album);
+    if(!clubMap[club]) clubMap[club] = [];
+    clubMap[club].push(a);
+  });
+
+  // Ordena clubes alfabeticamente
+  const clubs = Object.keys(clubMap).sort();
+
+  document.getElementById('clubList').innerHTML = clubs.map((club, i) => {
+    const albums = clubMap[club];
+    const cards = albums.map(a => prodCard(a)).join('');
+    return `<div class="club-row">
+      <div class="club-header" onclick="toggleClub(this)" id="club-${i}">
+        <div class="club-name">
+          <span>&#8250;</span> ${club}
+          <span class="club-count">${albums.length} item(s)</span>
+        </div>
+        <span class="club-arrow">&#8250;</span>
+      </div>
+      <div class="club-body" id="body-${i}">
+        <div class="products-grid">${cards}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleClub(header){
+  header.classList.toggle('open');
+  const bodyId = header.id.replace('club-','body-');
+  const body = document.getElementById(bodyId);
+  body.classList.toggle('open');
 }
 
 function showPage(id, el){
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+  document.querySelectorAll('.view').forEach(v => v.style.display='none');
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
   if(el) el.classList.add('active');
@@ -204,46 +313,46 @@ function showPage(id, el){
 }
 
 function goBack(){
-  document.getElementById('catView').style.display = 'none';
-  document.getElementById(prevPage || 'home').classList.add('active');
+  document.getElementById('catView').style.display='none';
+  document.getElementById(prevPage||'home').classList.add('active');
 }
 
 function search(q){
   q = q.trim().toLowerCase();
   if(!q){ closeSearch(); return; }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
-  document.getElementById('searchView').style.display = 'block';
-  const res = catalog.filter(a => a.album.toLowerCase().includes(q) || a.cat.toLowerCase().includes(q));
+  document.querySelectorAll('.view').forEach(v => v.style.display='none');
+  document.getElementById('searchView').style.display='block';
+  const res = catalog.filter(a => cleanName(a.album).toLowerCase().includes(q) || a.cat.toLowerCase().includes(q));
   document.getElementById('searchGrid').innerHTML = res.length
-    ? res.map(card).join('')
+    ? res.map(a => prodCard(a)).join('')
     : '<div class="empty">Nenhum resultado.</div>';
 }
 
 function closeSearch(){
-  document.getElementById('searchView').style.display = 'none';
-  document.getElementById('q').value = '';
-  document.getElementById(prevPage || 'home').classList.add('active');
+  document.getElementById('searchView').style.display='none';
+  document.getElementById('q').value='';
+  document.getElementById(prevPage||'home').classList.add('active');
 }
 
 function openLb(id){
-  const a = catalog.find(x => x.albumId === id); if(!a) return;
-  lbImgs = largeImgs(a.images); lbIdx = 0; lbTitle = cleanName(a.album);
+  const a = catalog.find(x => x.albumId===id); if(!a) return;
+  lbImgs = largeImgs(a.images); lbIdx=0; lbTitle=cleanName(a.album);
   updLb(); document.getElementById('lb').classList.add('open');
 }
 
 function updLb(){
   document.getElementById('lbImg').src = proxyUrl(lbImgs[lbIdx]);
   document.getElementById('lbName').textContent = lbTitle;
-  document.getElementById('lbSub').textContent = lbImgs.length > 1 ? `Foto ${lbIdx+1} de ${lbImgs.length}` : '';
-  document.getElementById('lbNav').style.display = lbImgs.length > 1 ? 'flex' : 'none';
+  document.getElementById('lbSub').textContent = lbImgs.length>1?`Foto ${lbIdx+1} de ${lbImgs.length}`:'';
+  document.getElementById('lbNav').style.display = lbImgs.length>1?'flex':'none';
 }
 
-function lbMove(d, e){ e.stopPropagation(); lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length; updLb(); }
+function lbMove(d,e){ e.stopPropagation(); lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length; updLb(); }
 function closeLb(){ document.getElementById('lb').classList.remove('open'); }
 function lbBg(e){ if(e.target===document.getElementById('lb')) closeLb(); }
 
-document.addEventListener('keydown', e => {
+document.addEventListener('keydown', e=>{
   if(!document.getElementById('lb').classList.contains('open')) return;
   if(e.key==='ArrowRight') lbMove(1,{stopPropagation:()=>{}});
   if(e.key==='ArrowLeft') lbMove(-1,{stopPropagation:()=>{}});
