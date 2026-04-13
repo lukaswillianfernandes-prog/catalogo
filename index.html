@@ -25,18 +25,15 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
 .badge{background:#e8f5e9;color:#2e7d32;font-size:10px;padding:1px 6px;border-radius:3px;margin-left:5px}
 .back-btn{background:none;border:1px solid #ccc;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:12px;margin-bottom:12px;color:#444}
 .back-btn:hover{background:#eee}
-.view-title{font-size:15px;font-weight:700;margin-bottom:10px}
+.view-title{font-size:15px;font-weight:700;margin-bottom:12px}
 
-/* Filtro de clubes */
-.clubes-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;background:#fff;padding:12px;border:1px solid #e0e0e0;border-radius:6px}
-.clube-tag{padding:6px 14px;border:1px solid #ddd;border-radius:20px;font-size:12px;cursor:pointer;background:#fff;color:#444;transition:all .12s;white-space:nowrap}
+/* Tags de clubes — só nomes limpos */
+.clubes-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;padding:12px;background:#fff;border:1px solid #e0e0e0;border-radius:6px}
+.clube-tag{padding:7px 16px;border:1px solid #ddd;border-radius:20px;font-size:13px;cursor:pointer;background:#fff;color:#444;transition:all .12s;white-space:nowrap}
 .clube-tag:hover{border-color:#2e7d32;color:#2e7d32}
 .clube-tag.active{background:#2e7d32;color:#fff;border-color:#2e7d32}
 
-/* Contagem */
 .result-count{font-size:12px;color:#888;margin-bottom:12px}
-
-/* Grid de produtos */
 .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
 .prod-card{background:#fff;border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;cursor:pointer;transition:box-shadow .15s}
 .prod-card:hover{box-shadow:0 3px 10px rgba(0,0,0,.13);border-color:#2e7d32}
@@ -44,24 +41,20 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
 .prod-info{padding:8px 10px}
 .prod-name{font-size:11px;font-weight:500;line-height:1.4;color:#333}
 .prod-sub{font-size:10px;color:#888;margin-top:2px}
-
-/* Lightbox */
 .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:999;align-items:center;justify-content:center;flex-direction:column}
 .lightbox.open{display:flex}
 .lb-img{max-width:92vw;max-height:74vh;object-fit:contain;border-radius:4px}
 .lb-name{color:#fff;margin-top:12px;font-size:13px;max-width:85vw;text-align:center;line-height:1.4}
 .lb-sub{color:#aaa;font-size:11px;margin-top:4px}
-.lb-close{position:absolute;top:16px;right:20px;color:#fff;font-size:28px;cursor:pointer;line-height:1}
+.lb-close{position:absolute;top:16px;right:20px;color:#fff;font-size:28px;cursor:pointer}
 .lb-nav{display:flex;gap:16px;margin-top:14px}
 .lb-nav button{background:rgba(255,255,255,.15);color:#fff;border:none;padding:8px 20px;border-radius:4px;cursor:pointer;font-size:13px}
 .lb-nav button:hover{background:rgba(255,255,255,.3)}
-
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;color:#888;gap:16px}
 .spinner{width:40px;height:40px;border:4px solid #e0e0e0;border-top-color:#2e7d32;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .no-img{width:100%;aspect-ratio:1;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#bbb}
 .empty{padding:30px;text-align:center;color:#888;font-size:13px}
-
 @media(max-width:600px){
   .cat-grid{grid-template-columns:repeat(2,1fr)}
   .products-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
@@ -69,7 +62,6 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
 </style>
 </head>
 <body>
-
 <header>
   <div class="header-top">
     <div class="logo">Soccer Jersey &amp; Retro Shirts</div>
@@ -86,13 +78,12 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
 
 <div id="home" class="page active">
   <p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Categorias</p>
-  <div class="cat-grid" id="homeGrid"><div class="loading" style="grid-column:1/-1"><div class="spinner"></div><span>Carregando catálogo...</span></div></div>
+  <div class="cat-grid" id="homeGrid"><div class="loading" style="grid-column:1/-1"><div class="spinner"></div><span>Carregando...</span></div></div>
 </div>
 <div id="all" class="page">
   <p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Todas as Categorias</p>
   <div class="cat-grid" id="allGrid"></div>
 </div>
-
 <div class="view" id="catView">
   <button class="back-btn" onclick="goBack()">&#8592; Voltar</button>
   <div class="view-title" id="catTitle"></div>
@@ -100,10 +91,9 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
   <div class="result-count" id="resultCount"></div>
   <div class="products-grid" id="catGrid"></div>
 </div>
-
 <div class="view" id="searchView">
   <button class="back-btn" onclick="closeSearch()">&#8592; Voltar</button>
-  <div class="view-title">Resultados da pesquisa</div>
+  <div class="view-title">Resultados</div>
   <div class="products-grid" id="searchGrid"></div>
 </div>
 
@@ -122,50 +112,63 @@ nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
 const PROXY = 'https://yupoo-proxy.lukaswillianfernandes.workers.dev';
 const JSON_URL = 'https://raw.githubusercontent.com/lukaswillianfernandes-prog/catalogo/main/yupoo_catalog_final.json';
 
-const IGNORAR = ['Promoções','Kids Tracksuit','Website shopping tutorial',
+// Categorias ignoradas
+const IGNORAR_CAT = ['Promoções','Kids Tracksuit','Website shopping tutorial',
   'Casual T-shirt','Windbreaker','Patch !','sock','Shorts','SIZE',
   'Call Me Whatsapp','Call Me →','Player','Total classification',
   'NBA Silk version','F1','NFL','MLB','NHL','Hat',"kids'",'Woman',
   'retro style 2','Baby jersey size:9-12','Kings League'];
+
+// Palavras que indicam produto NÃO é uma camisa principal
+const IGNORAR_PRODUTO = ['windbreaker','corta-vento','shorts','short','kit kids',
+  'kids kit','baby','tracksuit','agasalho','vest','colete','sock','meia',
+  'hat','boné','patch','woman','women','feminino','cropped','tank top',
+  'basketball','s-xxl','s-xl','size'];
 
 const TRAD = {
   'Mens':'Masculino','Womens':'Feminino','Kids':'Infantil',
   'Home':'Casa','Away':'Visitante','Third':'Terceiro','Fourth':'Quarto',
   'Jersey':'Camisa','Kit':'Kit','Long Sleeve':'Manga Longa',
   'Goalkeeper':'Goleiro','Pre-Match':'Pré-Jogo','Special':'Especial',
-  'Retro':'Retrô','Training':'Treino','Tracksuit':'Agasalho',
-  'Vest':'Colete','Anniversary':'Aniversário','Leaked':'Vazada',
-  'Player Version':'Versão Jogador','Concept':'Conceito',
-  'World Cup':'Copa do Mundo','Champions':'Campeão','Cropped':'Cropped'
+  'Retro':'Retrô','Training':'Treino','Player Version':'Versão Jogador',
+  'World Cup':'Copa do Mundo','Anniversary':'Aniversário','Concept':'Conceito'
 };
 
 function traduzir(nome){
   nome = nome.replace(/<[^>]+>/g,'').trim();
-  nome = nome.replace(/\b(\w+?)(\d+)$/,'$1');
-  nome = nome.replace(/(\w)(\d+)\s/g,'$1 ');
+  nome = nome.replace(/\b(\w+?)(\d+)$/,'$1').trim();
   Object.entries(TRAD).forEach(([en,pt])=>{
     nome = nome.replace(new RegExp('\\b'+en+'\\b','gi'),pt);
   });
   return nome.trim();
 }
 
+// Extrai o nome limpo do clube — só palavras antes do ano ou tipo
 function extrairClube(nome){
   nome = nome.replace(/<[^>]+>/g,'').trim();
-  nome = nome.replace(/\b(\w+?)(\d+)$/,'$1');
-  const prefixos = ['Mens ','Womens ','Kids ','Retro '];
-  prefixos.forEach(p=>{ if(nome.startsWith(p)) nome=nome.substring(p.length); });
-  const keywords = ['home','away','third','fourth','jersey','kit','long','goalkeeper',
-    'pre-match','special','training','tracksuit','concept','leaked','player','cropped',
-    '2024','2025','2026','2027','2023','2022','2021','2020','2019','2018','2017','2016',
-    '2015','2014','2013','2012','2011','2010','2009','2008','2007','2006','2005','2004',
-    '2003','2002','2001','2000','1999','1998','1997','1996','1995','1994','1993','1992','1991','1990'];
+  // Remove prefixos
+  ['Mens ','Womens ','Kids ','Retro ','Masculino ','Feminino '].forEach(p=>{
+    if(nome.toLowerCase().startsWith(p.toLowerCase())) nome=nome.substring(p.length);
+  });
+  const stop = ['home','away','third','fourth','jersey','kit','long','goalkeeper',
+    'pre','special','training','tracksuit','concept','leaked','player','cropped',
+    'goalkeeper','purple','black','white','blue','red','yellow','green','pink',
+    '2020','2021','2022','2023','2024','2025','2026','2027',
+    '2019','2018','2017','2016','2015','2014','2013','2012','2011','2010',
+    '2009','2008','2007','2006','2005','2004','2003','2002','2001','2000',
+    '1999','1998','1997','1996','1995','1994','1993','1992','1991','1990'];
   const partes = nome.split(' ');
   const clube = [];
   for(const p of partes){
-    if(keywords.includes(p.toLowerCase())||/^\d{4}/.test(p)) break;
+    if(stop.includes(p.toLowerCase()) || /^\d{4}/.test(p) || /^\d{2}\/\d{2}/.test(p)) break;
     clube.push(p);
   }
-  return clube.join(' ').trim() || nome.split(' ').slice(0,2).join(' ');
+  return clube.join(' ').trim() || partes.slice(0,2).join(' ');
+}
+
+function deveMostrar(nome){
+  const n = nome.toLowerCase().replace(/<[^>]+>/g,'');
+  return !IGNORAR_PRODUTO.some(p => n.includes(p));
 }
 
 function extrairAno(nome){
@@ -195,7 +198,7 @@ async function loadCatalog(){
 
 function cats(){
   const s=new Set();
-  catalog.forEach(a=>{ if(!IGNORAR.includes(a.cat)) s.add(a.cat); });
+  catalog.forEach(a=>{ if(!IGNORAR_CAT.includes(a.cat)) s.add(a.cat); });
   const order=['New Arrivals','Premier League','La Liga','Serie A','Bundesliga','Ligue 1',
     'Brasileiro Série A','Liga Portugal','Superliga Argentina','Dutch Eredivisie','Scottish League',
     'Liga MX','Saudi Professional League','MLS','Chile League','Japan League',
@@ -210,7 +213,7 @@ function renderCatGrid(id){
     const n=catalog.filter(a=>a.cat===c).length;
     return `<div class="cat-item" onclick="openCat('${c.replace(/'/g,"\\'")}')">
       <span>${c}${n?`<span class="badge">${n}</span>`:''}</span>
-      <span style="color:#bbb;font-size:13px">&#8250;</span>
+      <span style="color:#bbb">&#8250;</span>
     </div>`;
   }).join('');
 }
@@ -234,8 +237,7 @@ function card(a){
 }
 
 function openCat(cat){
-  currentCat=cat;
-  currentClube='Todos';
+  currentCat=cat; currentClube='Todos';
   prevPage=document.querySelector('.page.active')?.id||'home';
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.style.display='none');
@@ -245,38 +247,41 @@ function openCat(cat){
 }
 
 function renderCatView(){
-  const items=catalog.filter(a=>a.cat===currentCat);
+  // Filtra produtos indesejados
+  const items = catalog
+    .filter(a=>a.cat===currentCat && deveMostrar(a.album));
 
-  // Extrai clubes únicos ordenados
-  const clubeSet=new Set();
-  items.forEach(a=>clubeSet.add(extrairClube(a.album)));
-  const clubes=['Todos',...Array.from(clubeSet).sort()];
+  // Extrai clubes únicos e LIMPOS
+  const clubeMap = new Map();
+  items.forEach(a=>{
+    const c = extrairClube(a.album);
+    if(c && c.length > 1) clubeMap.set(c, (clubeMap.get(c)||0)+1);
+  });
+  const clubes = ['Todos', ...Array.from(clubeMap.keys()).sort()];
 
-  // Renderiza tags de clubes
-  document.getElementById('clubesTags').innerHTML=clubes.map(c=>
+  // Renderiza tags
+  document.getElementById('clubesTags').innerHTML = clubes.map(c=>
     `<span class="clube-tag${c===currentClube?' active':''}" onclick="filtrarClube('${c.replace(/'/g,"\\'")}')">
       ${c}
     </span>`
   ).join('');
 
-  // Filtra por clube selecionado
-  let filtrados=currentClube==='Todos'
-    ?items
-    :items.filter(a=>extrairClube(a.album)===currentClube);
+  // Filtra e ordena do mais recente
+  let filtrados = currentClube==='Todos'
+    ? items
+    : items.filter(a=>extrairClube(a.album)===currentClube);
 
-  // Ordena do mais recente para o mais antigo
-  filtrados=filtrados.sort((a,b)=>extrairAno(b.album)-extrairAno(a.album));
+  filtrados = filtrados.sort((a,b)=>extrairAno(b.album)-extrairAno(a.album));
 
-  document.getElementById('resultCount').textContent=filtrados.length+' camisa(s) encontrada(s)';
-  document.getElementById('catGrid').innerHTML=filtrados.length
-    ?filtrados.map(a=>card(a)).join('')
-    :'<div class="empty">Nenhuma camisa encontrada.</div>';
+  document.getElementById('resultCount').textContent = filtrados.length+' camisa(s)';
+  document.getElementById('catGrid').innerHTML = filtrados.length
+    ? filtrados.map(a=>card(a)).join('')
+    : '<div class="empty">Nenhuma camisa encontrada.</div>';
 }
 
 function filtrarClube(clube){
   currentClube=clube;
   renderCatView();
-  // Scroll para o topo das camisas
   document.getElementById('catGrid').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
@@ -300,11 +305,12 @@ function search(q){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.style.display='none');
   document.getElementById('searchView').style.display='block';
-  const res=catalog.filter(a=>traduzir(a.album).toLowerCase().includes(q)||a.cat.toLowerCase().includes(q));
-  const sorted=res.sort((a,b)=>extrairAno(b.album)-extrairAno(a.album));
-  document.getElementById('searchGrid').innerHTML=sorted.length
-    ?sorted.map(a=>card(a)).join('')
-    :'<div class="empty">Nenhum resultado encontrado.</div>';
+  const res=catalog
+    .filter(a=>deveMostrar(a.album)&&(traduzir(a.album).toLowerCase().includes(q)||a.cat.toLowerCase().includes(q)))
+    .sort((a,b)=>extrairAno(b.album)-extrairAno(a.album));
+  document.getElementById('searchGrid').innerHTML=res.length
+    ?res.map(a=>card(a)).join('')
+    :'<div class="empty">Nenhum resultado.</div>';
 }
 
 function closeSearch(){
