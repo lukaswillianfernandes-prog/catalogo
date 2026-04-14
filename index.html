@@ -1,279 +1,259 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Soccer Jersey & Retro Shirts</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f5f5f5;color:#222;font-size:14px}
-header{background:#fff;border-bottom:1px solid #ddd;padding:0 16px;position:sticky;top:0;z-index:100}
-.header-top{display:flex;align-items:center;justify-content:space-between;padding:10px 0;gap:10px;flex-wrap:wrap}
-.logo{font-size:16px;font-weight:700;color:#1a1a1a}
-.search-bar{display:flex;flex:1;min-width:180px;max-width:420px;border:1px solid #ccc;border-radius:4px;overflow:hidden}
-.search-bar input{flex:1;padding:7px 10px;border:none;outline:none;font-size:13px}
-.search-bar button{background:#2e7d32;color:#fff;border:none;padding:7px 14px;cursor:pointer;font-size:13px}
-nav{display:flex;gap:20px;border-top:1px solid #eee}
-nav a{padding:9px 0;font-size:13px;color:#444;text-decoration:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
-nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
-.page{display:none;padding:16px}
-.page.active{display:block}
-.view{display:none;padding:16px}
-.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border:1px solid #e0e0e0}
-.cat-item{padding:12px 14px;font-size:13px;color:#222;cursor:pointer;border-right:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center;transition:background .12s}
-.cat-item:hover{background:#e8f5e9;color:#2e7d32}
-.badge{background:#e8f5e9;color:#2e7d32;font-size:10px;padding:1px 6px;border-radius:3px;margin-left:5px}
-.back-btn{background:none;border:1px solid #ccc;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:12px;margin-bottom:14px;color:#444}
-.back-btn:hover{background:#eee}
-.view-title{font-size:15px;font-weight:700;margin-bottom:14px}
-.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
-.prod-card{background:#fff;border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;cursor:pointer;transition:box-shadow .15s}
-.prod-card:hover{box-shadow:0 3px 10px rgba(0,0,0,.13);border-color:#2e7d32}
-.prod-img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#f0f0f0}
-.prod-info{padding:8px 10px}
-.prod-name{font-size:12px;font-weight:500;line-height:1.3;color:#222}
-.prod-sub{font-size:11px;color:#888;margin-top:2px}
-.no-img{width:100%;aspect-ratio:1;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#bbb}
-.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:999;align-items:center;justify-content:center;flex-direction:column}
-.lightbox.open{display:flex}
-.lb-img{max-width:90vw;max-height:72vh;object-fit:contain;border-radius:4px}
-.lb-name{color:#fff;margin-top:12px;font-size:13px;max-width:80vw;text-align:center}
-.lb-sub{color:#aaa;font-size:11px;margin-top:4px}
-.lb-close{position:absolute;top:16px;right:20px;color:#fff;font-size:28px;cursor:pointer;line-height:1}
-.lb-nav{display:flex;gap:16px;margin-top:14px}
-.lb-nav button{background:rgba(255,255,255,.15);color:#fff;border:none;padding:8px 18px;border-radius:4px;cursor:pointer;font-size:13px}
-.lb-nav button:hover{background:rgba(255,255,255,.3)}
-.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;color:#888;gap:16px}
-.spinner{width:40px;height:40px;border:4px solid #e0e0e0;border-top-color:#2e7d32;border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.empty{padding:30px;text-align:center;color:#888;font-size:13px}
-@media(max-width:600px){
-  .cat-grid{grid-template-columns:repeat(2,1fr)}
-  .products-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
-}
-</style>
-</head>
-<body>
+import React, { useState } from 'react';
+import { Search, ChevronRight, QrCode, Shirt, ArrowLeft } from 'lucide-react';
 
-<header>
-  <div class="header-top">
-    <div class="logo">Soccer Jersey &amp; Retro Shirts</div>
-    <div class="search-bar">
-      <input type="text" id="q" placeholder="Pesquisar..." oninput="doSearch(this.value)">
-      <button onclick="doSearch(document.getElementById('q').value)">Pesquisa</button>
+// --- MOCK DATA ---
+// Categorias divididas em colunas exatamente como na imagem fornecida
+const categoriesColumns = [
+  [
+    { name: 'Call Me Whatsapp', hasArrow: false },
+    { name: 'Retro', hasArrow: false },
+    { name: 'Liga Portugal', hasArrow: false },
+    { name: 'Bundesliga', hasArrow: false },
+    { name: 'Japan League', hasArrow: false },
+    { name: 'MLS', hasArrow: false },
+    { name: 'UEFA Euro 2024 Champions! Spain', hasArrow: false },
+    { name: 'Other leagues', hasArrow: false },
+    { name: 'NFL', hasArrow: false },
+    { name: 'Hat', hasArrow: false },
+    { name: 'Baby jersey size:9-12', hasArrow: false },
+    { name: 'Kids Tracksuit', hasArrow: false },
+    { name: 'New orders', hasArrow: false },
+  ],
+  [
+    { name: '2026 World Cup', hasArrow: true },
+    { name: 'NBA Silk version', hasArrow: false },
+    { name: 'Premier League', hasArrow: false },
+    { name: 'Superliga Argentina', hasArrow: false },
+    { name: 'Dutch Eredivisie', hasArrow: false },
+    { name: 'Saudi Professional League', hasArrow: false },
+    { name: 'Player', hasArrow: false },
+    { name: 'Casual T-shirt', hasArrow: false },
+    { name: 'MLB', hasArrow: false },
+    { name: 'Patch !', hasArrow: false },
+    { name: 'sock', hasArrow: false },
+    { name: 'Football Club', hasArrow: false },
+    { name: 'Álbum não categorizado', hasArrow: false },
+  ],
+  [
+    { name: 'Total classification', hasArrow: false },
+    { name: 'National Team', hasArrow: false },
+    { name: 'Brasileiro Série A', hasArrow: true },
+    { name: 'Ligue 1', hasArrow: false },
+    { name: 'Scottish League', hasArrow: false },
+    { name: 'Kings League', hasArrow: false },
+    { name: 'F1', hasArrow: false },
+    { name: 'Woman', hasArrow: false },
+    { name: 'NHL', hasArrow: false },
+    { name: 'Shorts', hasArrow: false },
+    { name: 'Promoções', hasArrow: false },
+    { name: 'National Team', hasArrow: false },
+  ],
+  [
+    { name: 'New Arrivals', hasArrow: false },
+    { name: 'La Liga', hasArrow: true },
+    { name: 'Serie A', hasArrow: false },
+    { name: 'Liga MX', hasArrow: false },
+    { name: 'Chile League', hasArrow: false },
+    { name: 'UEFA Euro 2024', hasArrow: false },
+    { name: 'Windbreaker', hasArrow: false },
+    { name: 'kids\'', hasArrow: false },
+    { name: 'retro style 2', hasArrow: false },
+    { name: 'SIZE', hasArrow: false },
+    { name: 'Call Me ->', hasArrow: false },
+    { name: 'Website shopping tutorial', hasArrow: false },
+  ]
+];
+
+// Banco de dados simulado de camisas para a pesquisa funcionar
+const mockInventory = [
+  { id: 1, title: 'Camisa Seleção Brasileira Home 2026', category: '2026 World Cup', tags: ['brasil', 'seleção', 'amarela'], color: 'bg-yellow-400', textColor: 'text-green-800' },
+  { id: 2, title: 'Camisa Seleção Argentina Away 2026', category: '2026 World Cup', tags: ['argentina', 'seleção', 'azul'], color: 'bg-blue-800', textColor: 'text-white' },
+  { id: 3, title: 'Camisa Flamengo Home 2024/25', category: 'Brasileiro Série A', tags: ['flamengo', 'brasil', 'rubro-negro', 'brasileirão'], color: 'bg-red-600', textColor: 'text-black' },
+  { id: 4, title: 'Camisa Palmeiras Home 2024', category: 'Brasileiro Série A', tags: ['palmeiras', 'brasil', 'verde', 'brasileirão'], color: 'bg-green-700', textColor: 'text-white' },
+  { id: 5, title: 'Camisa Real Madrid Home 24/25', category: 'La Liga', tags: ['real madrid', 'espanha', 'branca'], color: 'bg-white', textColor: 'text-gray-800' },
+  { id: 6, title: 'Camisa Barcelona Away 24/25', category: 'La Liga', tags: ['barcelona', 'espanha', 'preta'], color: 'bg-gray-900', textColor: 'text-white' },
+  { id: 7, title: 'Camisa Arsenal Home 23/24', category: 'Premier League', tags: ['arsenal', 'inglaterra', 'vermelha'], color: 'bg-red-500', textColor: 'text-white' },
+  { id: 8, title: 'Camisa Manchester City 24/25', category: 'Premier League', tags: ['city', 'manchester', 'inglaterra', 'azul claro'], color: 'bg-blue-300', textColor: 'text-white' },
+  { id: 9, title: 'Camisa Milan Retrô 2006/07', category: 'Retro', tags: ['milan', 'italia', 'retro', 'kaka'], color: 'bg-red-800', textColor: 'text-black' },
+  { id: 10, title: 'Camisa Boca Juniors Home 2024', category: 'Superliga Argentina', tags: ['boca', 'argentina', 'azul', 'amarelo'], color: 'bg-blue-900', textColor: 'text-yellow-400' },
+  { id: 11, title: 'Camisa PSG Home 24/25', category: 'Ligue 1', tags: ['psg', 'paris', 'frança', 'azul'], color: 'bg-blue-950', textColor: 'text-red-500' },
+  { id: 12, title: 'Camisa Bayern de Munique Home 24/25', category: 'Bundesliga', tags: ['bayern', 'alemanha', 'vermelha'], color: 'bg-red-700', textColor: 'text-white' },
+];
+
+export default function App() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Função para executar a pesquisa
+  const handleSearch = (e) => {
+    e?.preventDefault();
+    if (!searchQuery.trim()) {
+      setIsSearching(false);
+      setActiveCategory(null);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const results = mockInventory.filter(item => 
+      item.title.toLowerCase().includes(query) || 
+      item.category.toLowerCase().includes(query) ||
+      item.tags.some(tag => tag.includes(query))
+    );
+    
+    setSearchResults(results);
+    setIsSearching(true);
+    setActiveCategory(null);
+  };
+
+  // Função para clicar em uma categoria
+  const handleCategoryClick = (categoryName) => {
+    const results = mockInventory.filter(item => item.category === categoryName);
+    setSearchResults(results);
+    setActiveCategory(categoryName);
+    setIsSearching(true);
+    setSearchQuery(''); // Limpa a barra de pesquisa
+  };
+
+  // Voltar para a tela inicial
+  const handleGoHome = () => {
+    setIsSearching(false);
+    setActiveCategory(null);
+    setSearchQuery('');
+  };
+
+  return (
+    <div className="min-h-screen bg-white font-sans text-gray-700">
+      
+      {/* HEADER TOP BAR */}
+      <div className="bg-[#f8f9fa] border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="text-xl md:text-2xl font-light text-gray-600">
+            Soccer Jersey& Retro Shirts
+          </div>
+          
+          <form onSubmit={handleSearch} className="flex w-full md:w-[450px]">
+            <div className="relative flex-grow">
+              <input 
+                type="text" 
+                placeholder="Pesquisar álbuns/fotos" 
+                className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:border-green-500 text-sm"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button type="button" className="absolute right-3 top-2.5 text-gray-400">
+                <Search size={18} />
+              </button>
+            </div>
+            <button 
+              type="submit"
+              className="bg-[#48b982] hover:bg-green-600 text-white px-6 py-2 rounded-r-md text-sm transition-colors"
+            >
+              Pesquisa
+            </button>
+          </form>
+        </div>
+
+        {/* NAVIGATION BAR */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center border-t border-gray-200 py-3">
+          <nav className="flex space-x-6 overflow-x-auto pb-1 text-sm text-gray-500">
+            <button onClick={handleGoHome} className={`pb-1 ${!isSearching ? 'text-[#48b982] border-b-2 border-[#48b982]' : 'hover:text-[#48b982]'}`}>
+              Início
+            </button>
+            <button className="hover:text-[#48b982] whitespace-nowrap">Álbum</button>
+            <button className="hover:text-[#48b982] whitespace-nowrap">Contacto</button>
+            <button className="hover:text-[#48b982] whitespace-nowrap flex items-center">
+              Todas As Categorias <span className="text-[10px] ml-1">▲</span>
+            </button>
+            <button className="hover:text-[#48b982] whitespace-nowrap">Whatsapp</button>
+          </nav>
+          
+          <div className="hidden md:flex items-center text-sm text-gray-500 space-x-2">
+            <span>Código QR</span>
+            <QrCode size={18} />
+          </div>
+        </div>
+      </div>
+
+      {/* MAIN CONTENT AREA */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        {/* CONDITIONAL RENDERING: CATEGORY GRID OR SEARCH RESULTS */}
+        {!isSearching ? (
+          /* CATEGORY COLUMNS VIEW (Default) */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4">
+            {categoriesColumns.map((column, colIdx) => (
+              <div key={colIdx} className="flex flex-col space-y-3">
+                {column.map((category, idx) => (
+                  <button 
+                    key={idx}
+                    onClick={() => handleCategoryClick(category.name)}
+                    className="flex items-center justify-between text-left text-[15px] text-gray-700 hover:text-[#48b982] group transition-colors"
+                  >
+                    <span className="truncate pr-2">{category.name}</span>
+                    {category.hasArrow && (
+                      <ChevronRight size={16} className="text-gray-300 group-hover:text-[#48b982]" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
+        ) : (
+          /* SEARCH RESULTS VIEW */
+          <div>
+            <div className="flex items-center space-x-4 mb-6 pb-4 border-b border-gray-100">
+              <button 
+                onClick={handleGoHome}
+                className="flex items-center text-sm text-gray-500 hover:text-[#48b982]"
+              >
+                <ArrowLeft size={16} className="mr-1" /> Voltar
+              </button>
+              <h2 className="text-xl font-medium text-gray-800">
+                {activeCategory 
+                  ? `Categoria: ${activeCategory}` 
+                  : `Resultados da pesquisa para: "${searchQuery}"`}
+              </h2>
+              <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                {searchResults.length} encontrados
+              </span>
+            </div>
+
+            {searchResults.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {searchResults.map((item) => (
+                  <div key={item.id} className="group cursor-pointer flex flex-col border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-white">
+                    {/* Placeholder de Imagem */}
+                    <div className={`w-full h-56 flex items-center justify-center ${item.color} ${item.textColor} bg-opacity-90 relative`}>
+                      <Shirt size={80} className="opacity-80 group-hover:scale-110 transition-transform duration-300" />
+                      <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                    </div>
+                    {/* Informações do Produto */}
+                    <div className="p-4 flex-grow flex flex-col justify-between">
+                      <div>
+                        <span className="text-xs text-[#48b982] font-semibold mb-1 block uppercase tracking-wider">{item.category}</span>
+                        <h3 className="text-sm font-medium text-gray-800 line-clamp-2">{item.title}</h3>
+                      </div>
+                      <div className="mt-3 text-xs text-gray-500 border-t border-gray-100 pt-2 flex justify-between items-center">
+                        <span>Ver álbum completo</span>
+                        <ChevronRight size={14} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+                <Search size={48} className="mb-4 text-gray-300" />
+                <p className="text-lg">Nenhum álbum ou foto encontrado.</p>
+                <p className="text-sm mt-2">Tente pesquisar por outro termo como "Brasil", "Real Madrid", ou clique em uma categoria.</p>
+              </div>
+            )}
+          </div>
+        )}
+
+      </main>
     </div>
-  </div>
-  <nav>
-    <a class="active" id="nav-home" onclick="showPage('home',this)">Início</a>
-    <a onclick="showPage('all',this)">Todas as Categorias</a>
-  </nav>
-</header>
-
-<div id="home" class="page active">
-  <p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Categorias</p>
-  <div class="cat-grid" id="homeGrid"><div class="loading" style="grid-column:1/-1"><div class="spinner"></div><span>Carregando...</span></div></div>
-</div>
-<div id="all" class="page">
-  <p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Todas as Categorias</p>
-  <div class="cat-grid" id="allGrid"></div>
-</div>
-<div class="view" id="catView">
-  <button class="back-btn" onclick="goBack()">&#8592; Voltar</button>
-  <div class="view-title" id="catTitle"></div>
-  <div class="products-grid" id="catGrid"></div>
-</div>
-<div class="view" id="searchView">
-  <button class="back-btn" onclick="closeSearch()">&#8592; Voltar</button>
-  <div class="view-title">Resultados</div>
-  <div class="products-grid" id="searchGrid"></div>
-</div>
-
-<div class="lightbox" id="lb" onclick="lbBg(event)">
-  <span class="lb-close" onclick="closeLb()">&#10005;</span>
-  <img class="lb-img" id="lbImg" src="" alt="">
-  <div class="lb-name" id="lbName"></div>
-  <div class="lb-sub" id="lbSub"></div>
-  <div class="lb-nav" id="lbNav">
-    <button onclick="lbMove(-1,event)">&#8592; Anterior</button>
-    <button onclick="lbMove(1,event)">Próximo &#8594;</button>
-  </div>
-</div>
-
-<script>
-const PROXY = 'https://yupoo-proxy.lukaswillianfernandes.workers.dev';
-const JSON_URL = 'https://raw.githubusercontent.com/lukaswillianfernandes-prog/catalogo/main/yupoo_catalog.json';
-
-const IGNORAR_CAT = ['Promoções','Kids Tracksuit','Website shopping tutorial',
-  'Casual T-shirt','Windbreaker','Patch !','sock','Shorts','SIZE',
-  'Call Me Whatsapp','Call Me →','Player','Total classification',
-  'NBA Silk version','F1','NFL','MLB','NHL','Hat',"kids'",'Woman',
-  'retro style 2','Baby jersey size:9-12','Kings League'];
-
-const BLOCK_WORDS = ['windbreaker','shorts','keychain','chaveiro','keyring',
-  'jacket','jaqueta','corta vento','agasalho'];
-
-function proxyUrl(u){ return u ? PROXY+'?url='+encodeURIComponent(u) : ''; }
-
-function cleanName(n){
-  if(!n) return '';
-  n = n.replace(/<[^>]+>/g,'').trim();
-  n = n.replace(/\s+S-\w+\d*$/i,'').trim();
-  n = n.replace(/([a-zA-Z])(\d+)$/, '$1').trim();
-  return n;
-}
-
-function isBlocked(name){
-  const n = name.toLowerCase();
-  // Bloqueia apenas windbreaker e chaveiros
-  if(n.includes('windbreaker')) return true;
-  if(n.includes('keychain') || n.includes('chaveiro') || n.includes('keyring')) return true;
-  return false;
-}
-
-function extractYear(name){
-  const s = name.match(/\b(\d{2})\/(\d{2})\b/);
-  if(s) return 2000 + parseInt(s[1]);
-  const m = name.match(/\b(19|20)(\d{2})\b/);
-  if(m) return parseInt(m[0]);
-  return 0;
-}
-
-let catalog = [];
-let prevPage = 'home';
-let lbImgs = [], lbIdx = 0, lbTitle = '';
-
-async function loadCatalog(){
-  try{
-    const res = await fetch(JSON_URL);
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    catalog = await res.json();
-    renderGrids();
-  }catch(e){
-    document.getElementById('homeGrid').innerHTML =
-      '<div class="empty" style="grid-column:1/-1">Erro ao carregar. Recarregue a página.</div>';
-  }
-}
-
-function getCats(){
-  const s = new Set();
-  catalog.forEach(a => { if(!IGNORAR_CAT.includes(a.cat)) s.add(a.cat); });
-  const order = ['New Arrivals','Premier League','La Liga','Serie A','Bundesliga','Ligue 1',
-    'Brasileiro Série A','Liga Portugal','Superliga Argentina','Dutch Eredivisie','Scottish League',
-    'Liga MX','Saudi Professional League','MLS','Chile League','Japan League',
-    'UEFA Euro 2024','2026 World Cup','National Team','Retro'];
-  const res = order.filter(c => s.has(c));
-  s.forEach(c => { if(!res.includes(c)) res.push(c); });
-  return res;
-}
-
-function renderGrids(){
-  ['homeGrid','allGrid'].forEach(id => {
-    document.getElementById(id).innerHTML = getCats().map(c => {
-      const n = catalog.filter(a => a.cat === c && !isBlocked(cleanName(a.album))).length;
-      return `<div class="cat-item" onclick="openCat('${c.replace(/'/g,"\\'")}')">
-        <span>${c}${n?`<span class="badge">${n}</span>`:''}</span>
-        <span style="color:#bbb;font-size:13px">&#8250;</span>
-      </div>`;
-    }).join('');
-  });
-}
-
-function largeImgs(imgs){
-  const l = imgs.filter(u => u && u.includes('/large.'));
-  return l.length ? l : (imgs.length ? [imgs[0]] : []);
-}
-
-function prodCard(a){
-  const imgs = largeImgs(a.images);
-  const name = cleanName(a.album);
-  const img = imgs.length
-    ? `<img class="prod-img" src="${proxyUrl(imgs[0])}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\\'no-img\\'>Sem imagem</div>'">`
-    : `<div class="no-img">Sem imagem</div>`;
-  return `<div class="prod-card" onclick="openLb('${a.albumId}')">
-    ${img}
-    <div class="prod-info">
-      <div class="prod-name">${name}</div>
-      ${imgs.length>1?`<div class="prod-sub">${imgs.length} fotos</div>`:''}
-    </div>
-  </div>`;
-}
-
-function openCat(cat){
-  prevPage = document.querySelector('.page.active')?.id || 'home';
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v => v.style.display='none');
-  document.getElementById('catView').style.display = 'block';
-  document.getElementById('catTitle').textContent = cat;
-
-  let items = catalog
-    .filter(a => a.cat === cat && !isBlocked(cleanName(a.album)))
-    .sort((a,b) => extractYear(cleanName(b.album)) - extractYear(cleanName(a.album)));
-
-  document.getElementById('catGrid').innerHTML = items.length
-    ? items.map(a => prodCard(a)).join('')
-    : '<div class="empty">Nenhum produto nesta categoria.</div>';
-}
-
-function showPage(id, el){
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v => v.style.display='none');
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-  if(el) el.classList.add('active');
-  prevPage = id;
-}
-
-function goBack(){
-  document.getElementById('catView').style.display='none';
-  document.getElementById(prevPage||'home').classList.add('active');
-}
-
-function doSearch(q){
-  q = q.trim().toLowerCase();
-  if(!q){ closeSearch(); return; }
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v => v.style.display='none');
-  document.getElementById('searchView').style.display='block';
-  const res = catalog.filter(a =>
-    !isBlocked(cleanName(a.album)) &&
-    (cleanName(a.album).toLowerCase().includes(q) || a.cat.toLowerCase().includes(q))
   );
-  document.getElementById('searchGrid').innerHTML = res.length
-    ? res.map(a => prodCard(a)).join('')
-    : '<div class="empty">Nenhum resultado.</div>';
 }
-
-function closeSearch(){
-  document.getElementById('searchView').style.display='none';
-  document.getElementById('q').value='';
-  document.getElementById(prevPage||'home').classList.add('active');
-}
-
-function openLb(id){
-  const a = catalog.find(x => x.albumId===id); if(!a) return;
-  lbImgs = largeImgs(a.images); lbIdx=0; lbTitle=cleanName(a.album);
-  updLb(); document.getElementById('lb').classList.add('open');
-}
-
-function updLb(){
-  document.getElementById('lbImg').src = proxyUrl(lbImgs[lbIdx]);
-  document.getElementById('lbName').textContent = lbTitle;
-  document.getElementById('lbSub').textContent = lbImgs.length>1?`Foto ${lbIdx+1} de ${lbImgs.length}`:'';
-  document.getElementById('lbNav').style.display = lbImgs.length>1?'flex':'none';
-}
-
-function lbMove(d,e){ e.stopPropagation(); lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length; updLb(); }
-function closeLb(){ document.getElementById('lb').classList.remove('open'); }
-function lbBg(e){ if(e.target===document.getElementById('lb')) closeLb(); }
-
-document.addEventListener('keydown', e=>{
-  if(!document.getElementById('lb').classList.contains('open')) return;
-  if(e.key==='ArrowRight') lbMove(1,{stopPropagation:()=>{}});
-  if(e.key==='ArrowLeft') lbMove(-1,{stopPropagation:()=>{}});
-  if(e.key==='Escape') closeLb();
-});
-
-loadCatalog();
-</script>
-</body>
-</html>
