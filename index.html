@@ -124,10 +124,9 @@ function cleanName(n){
 
 function isBlocked(name){
   const n = name.toLowerCase();
-  if(BLOCK_WORDS.some(w => n.includes(w))) return true;
-  const hasYear = /\b\d{2,4}[\/\-]\d{2,4}\b|\b(19|20)\d{2}\b/.test(name);
-  const hasProduct = /(jersey|shirt|kit|away|home|retro|special|goalkeeper|pre.match|training|vest|suit|crop|top|long sleeve)/i.test(name);
-  if(!hasYear && !hasProduct) return true;
+  // Bloqueia apenas windbreaker e chaveiros
+  if(n.includes('windbreaker')) return true;
+  if(n.includes('keychain') || n.includes('chaveiro') || n.includes('keyring')) return true;
   return false;
 }
 
