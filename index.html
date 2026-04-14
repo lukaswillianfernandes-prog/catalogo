@@ -1,146 +1,280 @@
-(async () => {
-  const BASE = 'https://royal-sports.x.yupoo.com';
-  const delay = ms => new Promise(r => setTimeout(r, ms));
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Soccer Jersey & Retro Shirts</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f5;color:#222;font-size:14px}
+header{background:#fff;border-bottom:1px solid #ddd;padding:0 16px;position:sticky;top:0;z-index:100}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:10px 0;gap:10px;flex-wrap:wrap}
+.logo{font-size:16px;font-weight:700;color:#1a1a1a}
+.search-bar{display:flex;flex:1;min-width:180px;max-width:420px;border:1px solid #ccc;border-radius:4px;overflow:hidden}
+.search-bar input{flex:1;padding:7px 10px;border:none;outline:none;font-size:13px}
+.search-bar button{background:#2e7d32;color:#fff;border:none;padding:7px 14px;cursor:pointer;font-size:13px}
+nav{display:flex;gap:20px;border-top:1px solid #eee}
+nav a{padding:9px 0;font-size:13px;color:#444;text-decoration:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+nav a.active,nav a:hover{color:#2e7d32;border-bottom-color:#2e7d32}
+.page{display:none;padding:16px}
+.page.active{display:block}
+.view{display:none;padding:16px}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border:1px solid #e0e0e0}
+.cat-item{padding:12px 14px;font-size:13px;color:#222;cursor:pointer;border-right:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center;transition:background .12s}
+.cat-item:hover{background:#e8f5e9;color:#2e7d32}
+.badge{background:#e8f5e9;color:#2e7d32;font-size:10px;padding:1px 6px;border-radius:3px;margin-left:5px}
+.back-btn{background:none;border:1px solid #ccc;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:12px;margin-bottom:14px;color:#444}
+.back-btn:hover{background:#eee}
+.view-title{font-size:15px;font-weight:700;margin-bottom:14px}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.prod-card{background:#fff;border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;cursor:pointer;transition:box-shadow .15s}
+.prod-card:hover{box-shadow:0 3px 10px rgba(0,0,0,.13);border-color:#2e7d32}
+.prod-img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#f0f0f0}
+.prod-info{padding:8px 10px}
+.prod-name{font-size:12px;font-weight:500;line-height:1.3;color:#222}
+.prod-sub{font-size:11px;color:#888;margin-top:2px}
+.no-img{width:100%;aspect-ratio:1;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#bbb}
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:999;align-items:center;justify-content:center;flex-direction:column}
+.lightbox.open{display:flex}
+.lb-img{max-width:90vw;max-height:72vh;object-fit:contain;border-radius:4px}
+.lb-name{color:#fff;margin-top:12px;font-size:13px;max-width:80vw;text-align:center}
+.lb-sub{color:#aaa;font-size:11px;margin-top:4px}
+.lb-close{position:absolute;top:16px;right:20px;color:#fff;font-size:28px;cursor:pointer;line-height:1}
+.lb-nav{display:flex;gap:16px;margin-top:14px}
+.lb-nav button{background:rgba(255,255,255,.15);color:#fff;border:none;padding:8px 18px;border-radius:4px;cursor:pointer;font-size:13px}
+.lb-nav button:hover{background:rgba(255,255,255,.3)}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;color:#888;gap:16px}
+.spinner{width:40px;height:40px;border:4px solid #e0e0e0;border-top-color:#2e7d32;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{padding:30px;text-align:center;color:#888;font-size:13px}
+@media(max-width:600px){
+  .cat-grid{grid-template-columns:repeat(2,1fr)}
+  .products-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+}
+</style>
+</head>
+<body>
 
-  const IGNORAR = ['Promoções','Kids Tracksuit','Website shopping tutorial',
-    'Casual T-shirt','Windbreaker','Patch !','sock','Shorts','SIZE',
-    'Call Me Whatsapp','Call Me →','Player','Total classification',
-    'NBA Silk version','F1','NFL','MLB','NHL','Hat',"kids'",'Woman',
-    'retro style 2','Baby jersey size:9-12','Kings League'];
+<header>
+  <div class="header-top">
+    <div class="logo">Soccer Jersey &amp; Retro Shirts</div>
+    <div class="search-bar">
+      <input type="text" id="q" placeholder="Pesquisar..." oninput="doSearch(this.value)">
+      <button onclick="doSearch(document.getElementById('q').value)">Pesquisa</button>
+    </div>
+  </div>
+  <nav>
+    <a class="active" id="nav-home" onclick="showPage('home',this)">Início</a>
+    <a onclick="showPage('all',this)">Todas as Categorias</a>
+  </nav>
+</header>
 
-  const results = [];
-  let totalImgs = 0;
+<div id="home" class="page active">
+  <p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Categorias</p>
+  <div class="cat-grid" id="homeGrid"><div class="loading" style="grid-column:1/-1"><div class="spinner"></div><span>Carregando...</span></div></div>
+</div>
+<div id="all" class="page">
+  <p style="font-size:14px;font-weight:700;border-bottom:2px solid #2e7d32;padding-bottom:6px;display:inline-block;margin-bottom:12px">Todas as Categorias</p>
+  <div class="cat-grid" id="allGrid"></div>
+</div>
+<div class="view" id="catView">
+  <button class="back-btn" onclick="goBack()">&#8592; Voltar</button>
+  <div class="view-title" id="catTitle"></div>
+  <div class="products-grid" id="catGrid"></div>
+</div>
+<div class="view" id="searchView">
+  <button class="back-btn" onclick="closeSearch()">&#8592; Voltar</button>
+  <div class="view-title">Resultados</div>
+  <div class="products-grid" id="searchGrid"></div>
+</div>
 
-  console.log('Buscando categorias...');
-  const catRes = await fetch(BASE + '/categories', {credentials:'include'});
-  const catHtml = await catRes.text();
+<div class="lightbox" id="lb" onclick="lbBg(event)">
+  <span class="lb-close" onclick="closeLb()">&#10005;</span>
+  <img class="lb-img" id="lbImg" src="" alt="">
+  <div class="lb-name" id="lbName"></div>
+  <div class="lb-sub" id="lbSub"></div>
+  <div class="lb-nav" id="lbNav">
+    <button onclick="lbMove(-1,event)">&#8592; Anterior</button>
+    <button onclick="lbMove(1,event)">Próximo &#8594;</button>
+  </div>
+</div>
 
-  const cats = [];
-  const catParts = catHtml.split('href="/categories/');
-  for (let i = 1; i < catParts.length; i++) {
-    const idEnd = catParts[i].indexOf('"');
-    const id = catParts[i].substring(0, idEnd);
-    const nameStart = catParts[i].indexOf('>') + 1;
-    const nameEnd = catParts[i].indexOf('<');
-    const name = catParts[i].substring(nameStart, nameEnd).trim();
-    if (id && id !== '0' && name && !cats.find(c => c.id === id) && !IGNORAR.includes(name)) {
-      cats.push({id, name});
-    }
+<script>
+const PROXY = 'https://yupoo-proxy.lukaswillianfernandes.workers.dev';
+const JSON_URL = 'https://raw.githubusercontent.com/lukaswillianfernandes-prog/catalogo/main/yupoo_catalog.json';
+
+const IGNORAR_CAT = ['Promoções','Kids Tracksuit','Website shopping tutorial',
+  'Casual T-shirt','Windbreaker','Patch !','sock','Shorts','SIZE',
+  'Call Me Whatsapp','Call Me →','Player','Total classification',
+  'NBA Silk version','F1','NFL','MLB','NHL','Hat',"kids'",'Woman',
+  'retro style 2','Baby jersey size:9-12','Kings League'];
+
+const BLOCK_WORDS = ['windbreaker','shorts','keychain','chaveiro','keyring',
+  'jacket','jaqueta','corta vento','agasalho'];
+
+function proxyUrl(u){ return u ? PROXY+'?url='+encodeURIComponent(u) : ''; }
+
+function cleanName(n){
+  if(!n) return '';
+  n = n.replace(/<[^>]+>/g,'').trim();
+  n = n.replace(/\s+S-\w+\d*$/i,'').trim();
+  n = n.replace(/([a-zA-Z])(\d+)$/, '$1').trim();
+  return n;
+}
+
+function isBlocked(name){
+  const n = name.toLowerCase();
+  if(BLOCK_WORDS.some(w => n.includes(w))) return true;
+  const hasYear = /\b\d{2,4}[\/\-]\d{2,4}\b|\b(19|20)\d{2}\b/.test(name);
+  const hasProduct = /(jersey|shirt|kit|away|home|retro|special|goalkeeper|pre.match|training|vest|suit|crop|top|long sleeve)/i.test(name);
+  if(!hasYear && !hasProduct) return true;
+  return false;
+}
+
+function extractYear(name){
+  const s = name.match(/\b(\d{2})\/(\d{2})\b/);
+  if(s) return 2000 + parseInt(s[1]);
+  const m = name.match(/\b(19|20)(\d{2})\b/);
+  if(m) return parseInt(m[0]);
+  return 0;
+}
+
+let catalog = [];
+let prevPage = 'home';
+let lbImgs = [], lbIdx = 0, lbTitle = '';
+
+async function loadCatalog(){
+  try{
+    const res = await fetch(JSON_URL);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    catalog = await res.json();
+    renderGrids();
+  }catch(e){
+    document.getElementById('homeGrid').innerHTML =
+      '<div class="empty" style="grid-column:1/-1">Erro ao carregar. Recarregue a página.</div>';
   }
-  console.log('Categorias: ' + cats.length);
+}
 
-  for (const cat of cats) {
-    console.log('Categoria: ' + cat.name);
+function getCats(){
+  const s = new Set();
+  catalog.forEach(a => { if(!IGNORAR_CAT.includes(a.cat)) s.add(a.cat); });
+  const order = ['New Arrivals','Premier League','La Liga','Serie A','Bundesliga','Ligue 1',
+    'Brasileiro Série A','Liga Portugal','Superliga Argentina','Dutch Eredivisie','Scottish League',
+    'Liga MX','Saudi Professional League','MLS','Chile League','Japan League',
+    'UEFA Euro 2024','2026 World Cup','National Team','Retro'];
+  const res = order.filter(c => s.has(c));
+  s.forEach(c => { if(!res.includes(c)) res.push(c); });
+  return res;
+}
 
-    // Busca subcategorias
-    const catPageRes = await fetch(BASE + '/categories/' + cat.id + '?uid=1', {credentials:'include'});
-    const catPageHtml = await catPageRes.text();
+function renderGrids(){
+  ['homeGrid','allGrid'].forEach(id => {
+    document.getElementById(id).innerHTML = getCats().map(c => {
+      const n = catalog.filter(a => a.cat === c && !isBlocked(cleanName(a.album))).length;
+      return `<div class="cat-item" onclick="openCat('${c.replace(/'/g,"\\'")}')">
+        <span>${c}${n?`<span class="badge">${n}</span>`:''}</span>
+        <span style="color:#bbb;font-size:13px">&#8250;</span>
+      </div>`;
+    }).join('');
+  });
+}
 
-    // Extrai subcategorias
-    const subcats = [];
-    const subParts = catPageHtml.split('href="/categories/');
-    for (let i = 1; i < subParts.length; i++) {
-      const idEnd = subParts[i].indexOf('"');
-      const subId = subParts[i].substring(0, idEnd);
-      const nameStart = subParts[i].indexOf('>') + 1;
-      const nameEnd = subParts[i].indexOf('<');
-      const subName = subParts[i].substring(nameStart, nameEnd).trim();
-      if (subId && subId !== cat.id && subId !== '0' && subName &&
-          !subcats.find(s => s.id === subId) &&
-          !cats.find(c => c.id === subId)) {
-        subcats.push({id: subId, name: subName, parentCat: cat.name});
-      }
-    }
+function largeImgs(imgs){
+  const l = imgs.filter(u => u && u.includes('/large.'));
+  return l.length ? l : (imgs.length ? [imgs[0]] : []);
+}
 
-    // Se tem subcategorias, usa elas; senão usa a categoria principal
-    const targets = subcats.length > 0
-      ? subcats.map(s => ({id: s.id, catName: cat.name + ' > ' + s.name}))
-      : [{id: cat.id, catName: cat.name}];
+function prodCard(a){
+  const imgs = largeImgs(a.images);
+  const name = cleanName(a.album);
+  const img = imgs.length
+    ? `<img class="prod-img" src="${proxyUrl(imgs[0])}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\\'no-img\\'>Sem imagem</div>'">`
+    : `<div class="no-img">Sem imagem</div>`;
+  return `<div class="prod-card" onclick="openLb('${a.albumId}')">
+    ${img}
+    <div class="prod-info">
+      <div class="prod-name">${name}</div>
+      ${imgs.length>1?`<div class="prod-sub">${imgs.length} fotos</div>`:''}
+    </div>
+  </div>`;
+}
 
-    if(subcats.length > 0) console.log('  Subcategorias: ' + subcats.map(s=>s.name).join(', '));
+function openCat(cat){
+  prevPage = document.querySelector('.page.active')?.id || 'home';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => v.style.display='none');
+  document.getElementById('catView').style.display = 'block';
+  document.getElementById('catTitle').textContent = cat;
 
-    for (const target of targets) {
-      let page = 1, hasMore = true;
-      const albums = [];
+  let items = catalog
+    .filter(a => a.cat === cat && !isBlocked(cleanName(a.album)))
+    .sort((a,b) => extractYear(cleanName(b.album)) - extractYear(cleanName(a.album)));
 
-      while (hasMore) {
-        const url = BASE + '/categories/' + target.id + '?page=' + page + '&uid=1';
-        const res = await fetch(url, {credentials:'include'});
-        const html = await res.text();
+  document.getElementById('catGrid').innerHTML = items.length
+    ? items.map(a => prodCard(a)).join('')
+    : '<div class="empty">Nenhum produto nesta categoria.</div>';
+}
 
-        const parts = html.split('/albums/');
-        const ids = [];
-        for (let i = 1; i < parts.length; i++) {
-          let id = '';
-          for (let j = 0; j < parts[i].length; j++) {
-            if (parts[i][j] >= '0' && parts[i][j] <= '9') id += parts[i][j];
-            else break;
-          }
-          if (id && !ids.includes(id)) ids.push(id);
-        }
+function showPage(id, el){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => v.style.display='none');
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  if(el) el.classList.add('active');
+  prevPage = id;
+}
 
-        if (ids.length === 0) { hasMore = false; break; }
-        ids.forEach(id => { if (!albums.find(a => a.id === id)) albums.push({id}); });
-        hasMore = html.includes('page=' + (page + 1)) && page < 100;
-        page++;
-        await delay(400);
-      }
+function goBack(){
+  document.getElementById('catView').style.display='none';
+  document.getElementById(prevPage||'home').classList.add('active');
+}
 
-      console.log('  ' + target.catName + ': ' + albums.length + ' albuns');
+function doSearch(q){
+  q = q.trim().toLowerCase();
+  if(!q){ closeSearch(); return; }
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => v.style.display='none');
+  document.getElementById('searchView').style.display='block';
+  const res = catalog.filter(a =>
+    !isBlocked(cleanName(a.album)) &&
+    (cleanName(a.album).toLowerCase().includes(q) || a.cat.toLowerCase().includes(q))
+  );
+  document.getElementById('searchGrid').innerHTML = res.length
+    ? res.map(a => prodCard(a)).join('')
+    : '<div class="empty">Nenhum resultado.</div>';
+}
 
-      for (const album of albums) {
-        try {
-          const aUrl = BASE + '/albums/' + album.id + '?uid=1';
-          const aRes = await fetch(aUrl, {credentials:'include'});
-          const aHtml = await aRes.text();
+function closeSearch(){
+  document.getElementById('searchView').style.display='none';
+  document.getElementById('q').value='';
+  document.getElementById(prevPage||'home').classList.add('active');
+}
 
-          // Nome via data-name
-          let albumName = '';
-          const dn = aHtml.indexOf('data-name="');
-          if (dn > -1) {
-            const dnStart = dn + 11;
-            const dnEnd = aHtml.indexOf('"', dnStart);
-            if (dnEnd > dnStart) albumName = aHtml.substring(dnStart, dnEnd).trim();
-          }
-          // Fallback: title
-          if (!albumName) {
-            const t1 = aHtml.indexOf('<title>');
-            const t2 = aHtml.indexOf('</title>');
-            if (t1 > -1 && t2 > t1) albumName = aHtml.substring(t1+7, t2).split('|')[0].trim();
-          }
-          if (!albumName) albumName = 'Album ' + album.id;
-          albumName = albumName.replace(/<[^>]+>/g,'').trim();
+function openLb(id){
+  const a = catalog.find(x => x.albumId===id); if(!a) return;
+  lbImgs = largeImgs(a.images); lbIdx=0; lbTitle=cleanName(a.album);
+  updLb(); document.getElementById('lb').classList.add('open');
+}
 
-          // Imagens /large. apenas
-          const imgUrls = [];
-          const srcParts = aHtml.split('src="');
-          for (let i = 1; i < srcParts.length; i++) {
-            const end = srcParts[i].indexOf('"');
-            const u = srcParts[i].substring(0, end);
-            if (u.indexOf('photo.yupoo.com') > -1 && u.indexOf('/large.') > -1) {
-              if (!imgUrls.includes(u)) imgUrls.push(u);
-            }
-          }
+function updLb(){
+  document.getElementById('lbImg').src = proxyUrl(lbImgs[lbIdx]);
+  document.getElementById('lbName').textContent = lbTitle;
+  document.getElementById('lbSub').textContent = lbImgs.length>1?`Foto ${lbIdx+1} de ${lbImgs.length}`:'';
+  document.getElementById('lbNav').style.display = lbImgs.length>1?'flex':'none';
+}
 
-          // Usa cat sem subcategoria (ex: "Brasileiro Série A" sem "> Grêmio")
-          const catFinal = cat.name;
+function lbMove(d,e){ e.stopPropagation(); lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length; updLb(); }
+function closeLb(){ document.getElementById('lb').classList.remove('open'); }
+function lbBg(e){ if(e.target===document.getElementById('lb')) closeLb(); }
 
-          if (imgUrls.length > 0 && !results.find(r => r.albumId === album.id)) {
-            results.push({cat: catFinal, album: albumName, albumId: album.id, images: imgUrls});
-            totalImgs += imgUrls.length;
-          }
-          await delay(200);
-        } catch(e) { console.warn('Erro album ' + album.id + ': ' + e.message); }
-      }
-    }
-  }
+document.addEventListener('keydown', e=>{
+  if(!document.getElementById('lb').classList.contains('open')) return;
+  if(e.key==='ArrowRight') lbMove(1,{stopPropagation:()=>{}});
+  if(e.key==='ArrowLeft') lbMove(-1,{stopPropagation:()=>{}});
+  if(e.key==='Escape') closeLb();
+});
 
-  console.log('Concluido! ' + results.length + ' albuns, ' + totalImgs + ' imagens.');
-  const blob = new Blob([JSON.stringify(results, null, 2)], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'yupoo_catalog_completo.json';
-  a.click();
-  window._yupooData = results;
-  console.log('Arquivo yupoo_catalog_completo.json baixado!');
-})();
+loadCatalog();
+</script>
+</body>
+</html>
