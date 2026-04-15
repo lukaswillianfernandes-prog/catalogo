@@ -1,136 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LF Camisas</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#fff;color:#1a1a1a}
 
+/* Header */
+.header{background:#fff;border-bottom:1px solid #e5e5e5;position:sticky;top:0;z-index:100}
+.header-top{display:flex;align-items:center;gap:16px;padding:14px 24px}
+.logo{font-size:22px;font-weight:700;color:#1a1a1a;white-space:nowrap;text-decoration:none}
+.logo span{color:#16a34a}
+.search-wrap{flex:1;max-width:600px;position:relative}
+.search-wrap input{width:100%;padding:10px 44px 10px 16px;border:2px solid #e5e5e5;border-radius:999px;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
+.search-wrap input:focus{border-color:#16a34a}
+.search-wrap button{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#888}
+.header-actions{display:flex;align-items:center;gap:16px;margin-left:auto}
+.wa-header{display:flex;align-items:center;gap:8px;background:#25d366;color:#fff;padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap}
+.wa-header svg{width:18px;height:18px;fill:#fff}
 
-  return (
-    <div className="min-h-screen bg-white font-sans text-gray-700">
-      
-      {/* HEADER TOP BAR */}
-      <div className="bg-[#f8f9fa] border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="text-xl md:text-2xl font-light text-gray-600">
-            Soccer Jersey& Retro Shirts
-          </div>
-          
-          <form onSubmit={handleSearch} className="flex w-full md:w-[450px]">
-            <div className="relative flex-grow">
-              <input 
-                type="text" 
-                placeholder="Pesquisar álbuns/fotos" 
-                className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:border-green-500 text-sm"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button type="button" className="absolute right-3 top-2.5 text-gray-400">
-                <Search size={18} />
-              </button>
-            </div>
-            <button 
-              type="submit"
-              className="bg-[#48b982] hover:bg-green-600 text-white px-6 py-2 rounded-r-md text-sm transition-colors"
-            >
-              Pesquisa
-            </button>
-          </form>
-        </div>
+/* Nav */
+.nav{background:#1a1a1a;padding:0 24px;display:flex;gap:4px;overflow-x:auto}
+.nav a{color:#ccc;font-size:13px;font-weight:500;padding:11px 14px;text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;transition:all .15s}
+.nav a:hover,.nav a.active{color:#fff;border-bottom-color:#16a34a}
 
-        {/* NAVIGATION BAR */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center border-t border-gray-200 py-3">
-          <nav className="flex space-x-6 overflow-x-auto pb-1 text-sm text-gray-500">
-            <button onClick={handleGoHome} className={`pb-1 ${!isSearching ? 'text-[#48b982] border-b-2 border-[#48b982]' : 'hover:text-[#48b982]'}`}>
-              Início
-            </button>
-            <button className="hover:text-[#48b982] whitespace-nowrap">Álbum</button>
-            <button className="hover:text-[#48b982] whitespace-nowrap">Contacto</button>
-            <button className="hover:text-[#48b982] whitespace-nowrap flex items-center">
-              Todas As Categorias <span className="text-[10px] ml-1">▲</span>
-            </button>
-            <button className="hover:text-[#48b982] whitespace-nowrap">Whatsapp</button>
-          </nav>
-          
-          <div className="hidden md:flex items-center text-sm text-gray-500 space-x-2">
-            <span>Código QR</span>
-            <QrCode size={18} />
-          </div>
+/* Layout */
+.container{display:flex;min-height:calc(100vh - 110px)}
+
+/* Sidebar */
+.sidebar{width:220px;flex-shrink:0;border-right:1px solid #f0f0f0;padding:20px 0;background:#fafafa}
+.sidebar-section{margin-bottom:8px}
+.sidebar-title{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.08em;padding:8px 20px 6px}
+.sidebar-item{display:flex;align-items:center;justify-content:space-between;padding:8px 20px;font-size:13px;color:#444;cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+.sidebar-item:hover{background:#f0f0f0;color:#1a1a1a}
+.sidebar-item.active{background:#f0fdf4;color:#16a34a;border-left-color:#16a34a;font-weight:600}
+.sidebar-item .count{background:#e5e5e5;color:#666;font-size:10px;padding:1px 6px;border-radius:999px}
+.sidebar-item.active .count{background:#dcfce7;color:#16a34a}
+
+/* Main */
+.main{flex:1;padding:24px}
+.main-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.main-title{font-size:18px;font-weight:700}
+.main-sub{font-size:13px;color:#888;margin-top:2px}
+.sort-select{padding:8px 12px;border:1px solid #e5e5e5;border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;outline:none;color:#444;cursor:pointer}
+
+/* Products grid */
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.prod-card{background:#fff;border:1px solid #eee;border-radius:14px;overflow:hidden;cursor:pointer;transition:all .2s;position:relative}
+.prod-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.1);transform:translateY(-2px);border-color:#d1d5db}
+.prod-img-wrap{padding:12px 12px 0;background:#f8f8f8}
+.prod-img-wrap img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;display:block;background:#eee}
+.prod-img-wrap .no-img{width:100%;aspect-ratio:1;background:#f0f0f0;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#bbb}
+.prod-info{padding:12px}
+.prod-name{font-size:13px;font-weight:600;color:#1a1a1a;line-height:1.4;margin-bottom:4px}
+.prod-cat{font-size:11px;color:#888}
+.prod-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.prod-photos{font-size:11px;color:#aaa}
+.prod-btn{background:#16a34a;color:#fff;border:none;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s}
+.prod-btn:hover{background:#15803d}
+.prod-badge{position:absolute;top:10px;left:10px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px}
+.prod-badge.new{background:#16a34a}
+
+/* Lightbox */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:999;align-items:center;justify-content:center}
+.lightbox.open{display:flex}
+.lb-box{background:#fff;border-radius:16px;overflow:hidden;max-width:900px;width:95vw;max-height:90vh;display:flex;flex-direction:column}
+.lb-header{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.lb-title{font-size:15px;font-weight:700}
+.lb-close{background:none;border:none;font-size:22px;cursor:pointer;color:#888;line-height:1}
+.lb-body{display:flex;flex:1;overflow:hidden}
+.lb-imgs{flex:1;padding:20px;background:#f8f8f8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.lb-main-img{max-width:100%;max-height:400px;object-fit:contain;border-radius:8px}
+.lb-thumbs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.lb-thumb{width:56px;height:56px;object-fit:cover;border-radius:6px;border:2px solid transparent;cursor:pointer;transition:border-color .15s}
+.lb-thumb.active,.lb-thumb:hover{border-color:#16a34a}
+.lb-side{width:260px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.lb-cat{font-size:12px;color:#16a34a;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.lb-name{font-size:16px;font-weight:700;line-height:1.4}
+.lb-wa{display:flex;align-items:center;justify-content:center;gap:8px;background:#25d366;color:#fff;padding:12px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;margin-top:auto}
+.lb-wa svg{width:20px;height:20px;fill:#fff}
+.lb-nav{display:flex;gap:8px;margin-top:8px}
+.lb-nav button{flex:1;padding:8px;background:#f5f5f5;border:1px solid #e5e5e5;border-radius:8px;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif}
+.lb-nav button:hover{background:#eee}
+
+/* WhatsApp float */
+.wa-float{position:fixed;bottom:24px;right:24px;z-index:500;background:#25d366;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(37,211,102,.4);cursor:pointer;text-decoration:none;transition:transform .2s}
+.wa-float:hover{transform:scale(1.1)}
+.wa-float svg{width:28px;height:28px;fill:#fff}
+
+/* Loading */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px;color:#888;gap:16px;grid-column:1/-1}
+.spinner{width:36px;height:36px;border:3px solid #e5e5e5;border-top-color:#16a34a;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{padding:60px;text-align:center;color:#888;font-size:14px;grid-column:1/-1}
+
+@media(max-width:768px){
+  .sidebar{display:none}
+  .header-top{padding:10px 16px}
+  .main{padding:16px}
+  .products-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .lb-body{flex-direction:column}
+  .lb-side{width:100%;padding:16px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <a class="logo" href="#" onclick="showAll()">LF <span>Camisas</span></a>
+    <div class="search-wrap">
+      <input type="text" id="q" placeholder="Buscar camisa, clube, seleção..." oninput="doSearch(this.value)">
+      <button onclick="doSearch(document.getElementById('q').value)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </button>
+    </div>
+    <div class="header-actions">
+      <a class="wa-header" href="https://wa.me/5500000000000" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+        WhatsApp
+      </a>
+    </div>
+  </div>
+  <nav class="nav" id="topNav"></nav>
+</div>
+
+<div class="container">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <div class="main-header">
+      <div>
+        <div class="main-title" id="mainTitle">Todos os produtos</div>
+        <div class="main-sub" id="mainSub"></div>
+      </div>
+      <select class="sort-select" onchange="sortProducts(this.value)">
+        <option value="recent">Mais recentes</option>
+        <option value="az">A → Z</option>
+        <option value="za">Z → A</option>
+      </select>
+    </div>
+    <div class="products-grid" id="grid">
+      <div class="loading"><div class="spinner"></div><span>Carregando catálogo...</span></div>
+    </div>
+  </main>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lb" onclick="lbBg(event)">
+  <div class="lb-box" onclick="event.stopPropagation()">
+    <div class="lb-header">
+      <span class="lb-title" id="lbTitle"></span>
+      <button class="lb-close" onclick="closeLb()">&#10005;</button>
+    </div>
+    <div class="lb-body">
+      <div class="lb-imgs">
+        <img class="lb-main-img" id="lbMain" src="" alt="">
+        <div class="lb-thumbs" id="lbThumbs"></div>
+        <div class="lb-nav">
+          <button onclick="lbMove(-1)">&#8592; Anterior</button>
+          <button onclick="lbMove(1)">Próximo &#8594;</button>
         </div>
       </div>
-
-      {/* MAIN CONTENT AREA */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        {/* CONDITIONAL RENDERING: CATEGORY GRID OR SEARCH RESULTS */}
-        {!isSearching ? (
-          /* CATEGORY COLUMNS VIEW (Default) */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4">
-            {categoriesColumns.map((column, colIdx) => (
-              <div key={colIdx} className="flex flex-col space-y-3">
-                {column.map((category, idx) => (
-                  <button 
-                    key={idx}
-                    onClick={() => handleCategoryClick(category.name)}
-                    className="flex items-center justify-between text-left text-[15px] text-gray-700 hover:text-[#48b982] group transition-colors"
-                  >
-                    <span className="truncate pr-2">{category.name}</span>
-                    {category.hasArrow && (
-                      <ChevronRight size={16} className="text-gray-300 group-hover:text-[#48b982]" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            ))}
-          </div>
-        ) : (
-          /* SEARCH RESULTS VIEW */
-          <div>
-            <div className="flex items-center space-x-4 mb-6 pb-4 border-b border-gray-100">
-              <button 
-                onClick={handleGoHome}
-                className="flex items-center text-sm text-gray-500 hover:text-[#48b982]"
-              >
-                <ArrowLeft size={16} className="mr-1" /> Voltar
-              </button>
-              <h2 className="text-xl font-medium text-gray-800">
-                {activeCategory 
-                  ? `Categoria: ${activeCategory}` 
-                  : `Resultados da pesquisa para: "${searchQuery}"`}
-              </h2>
-              <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                {searchResults.length} encontrados
-              </span>
-            </div>
-
-            {searchResults.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {searchResults.map((item) => (
-                  <div key={item.id} className="group cursor-pointer flex flex-col border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-white">
-                    {/* Placeholder de Imagem */}
-                    <div className={`w-full h-56 flex items-center justify-center ${item.color} ${item.textColor} bg-opacity-90 relative`}>
-                      <Shirt size={80} className="opacity-80 group-hover:scale-110 transition-transform duration-300" />
-                      <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                    </div>
-                    {/* Informações do Produto */}
-                    <div className="p-4 flex-grow flex flex-col justify-between">
-                      <div>
-                        <span className="text-xs text-[#48b982] font-semibold mb-1 block uppercase tracking-wider">{item.category}</span>
-                        <h3 className="text-sm font-medium text-gray-800 line-clamp-2">{item.title}</h3>
-                      </div>
-                      <div className="mt-3 text-xs text-gray-500 border-t border-gray-100 pt-2 flex justify-between items-center">
-                        <span>Ver álbum completo</span>
-                        <ChevronRight size={14} />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-                <Search size={48} className="mb-4 text-gray-300" />
-                <p className="text-lg">Nenhum álbum ou foto encontrado.</p>
-                <p className="text-sm mt-2">Tente pesquisar por outro termo como "Brasil", "Real Madrid", ou clique em uma categoria.</p>
-              </div>
-            )}
-          </div>
-        )}
-
-      </main>
+      <div class="lb-side">
+        <div class="lb-cat" id="lbCat"></div>
+        <div class="lb-name" id="lbName"></div>
+        <a class="lb-wa" id="lbWa" href="#" target="_blank">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+          Pedir via WhatsApp
+        </a>
+      </div>
     </div>
-  );
+  </div>
+</div>
+
+<!-- WhatsApp flutuante -->
+<a class="wa-float" href="https://wa.me/5500000000000" target="_blank" title="WhatsApp">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+</a>
+
+<script>
+const PROXY = 'https://yupoo-proxy.lukaswillianfernandes.workers.dev';
+const JSON_URL = 'https://raw.githubusercontent.com/lukaswillianfernandes-prog/catalogo/main/yupoo_catalog.json';
+const WA_NUM = '5555996702674';
+
+const IGNORAR_CAT = ['Promoções','Kids Tracksuit','Website shopping tutorial',
+  'Casual T-shirt','Windbreaker','Patch !','sock','Shorts','SIZE',
+  'Call Me Whatsapp','Call Me →','Player','Total classification',
+  'NBA Silk version','F1','NFL','MLB','NHL','Hat',"kids'",'Woman',
+  'retro style 2','Baby jersey size:9-12','Kings League'];
+
+const CAT_ORDER = ['New Arrivals','Premier League','La Liga','Serie A','Bundesliga','Ligue 1',
+  'Brasileiro Série A','Liga Portugal','Superliga Argentina','Dutch Eredivisie','Scottish League',
+  'Liga MX','Saudi Professional League','MLS','Chile League','Japan League',
+  'UEFA Euro 2024','2026 World Cup','National Team','Retro'];
+
+function px(u){ return u ? PROXY+'?url='+encodeURIComponent(u) : ''; }
+
+function clean(n){
+  if(!n) return '';
+  n = n.replace(/<[^>]+>/g,'').trim();
+  n = n.replace(/\s+S-\w+\d*$/i,'').trim();
+  n = n.replace(/([a-zA-Z])(\d+)$/,'$1').trim();
+  return n;
 }
+
+function blocked(name){
+  const n = name.toLowerCase();
+  return n.includes('windbreaker') || n.includes('keychain') || n.includes('chaveiro') || n.includes('keyring');
+}
+
+function yr(name){
+  const s = name.match(/\b(\d{2})\/(\d{2})\b/);
+  if(s) return 2000+parseInt(s[1]);
+  const m = name.match(/\b(19|20)(\d{2})\b/);
+  return m ? parseInt(m[0]) : 0;
+}
+
+function largeImgs(imgs){
+  const l = imgs.filter(u=>u&&u.includes('/large.'));
+  return l.length ? l : (imgs.length?[imgs[0]]:[]);
+}
+
+let catalog=[], current=[], currentCat='', sortMode='recent';
+let lbImgs=[], lbIdx=0, lbAlbum=null;
+
+async function init(){
+  try{
+    const r = await fetch(JSON_URL);
+    catalog = await r.json();
+    buildNav();
+    buildSidebar();
+    showAll();
+  }catch(e){
+    document.getElementById('grid').innerHTML='<div class="empty">Erro ao carregar. Recarregue a página.</div>';
+  }
+}
+
+function getCats(){
+  const s=new Set();
+  catalog.forEach(a=>{if(!IGNORAR_CAT.includes(a.cat)&&!blocked(clean(a.album)))s.add(a.cat);});
+  const res=CAT_ORDER.filter(c=>s.has(c));
+  s.forEach(c=>{if(!res.includes(c))res.push(c);});
+  return res;
+}
+
+function buildNav(){
+  const cats=getCats();
+  document.getElementById('topNav').innerHTML=
+    `<a class="active" onclick="showAll()">Todos</a>`+
+    cats.map(c=>`<a onclick="filterCat('${c.replace(/'/g,"\\'")}','this')">${c}</a>`).join('');
+}
+
+function buildSidebar(){
+  const cats=getCats();
+  const groups={
+    'Ligas Europeias':['Premier League','La Liga','Serie A','Bundesliga','Ligue 1','Liga Portugal','Dutch Eredivisie','Scottish League'],
+    'Américas':['Brasileiro Série A','Superliga Argentina','Liga MX','MLS','Chile League'],
+    'Seleções':['National Team','2026 World Cup','UEFA Euro 2024'],
+    'Especiais':['New Arrivals','Retro'],
+    'Outros':[]
+  };
+  const used=new Set(Object.values(groups).flat());
+  cats.forEach(c=>{if(!used.has(c))groups['Outros'].push(c);});
+
+  let html='';
+  for(const [g,items] of Object.entries(groups)){
+    const filtered=items.filter(c=>cats.includes(c));
+    if(!filtered.length) continue;
+    html+=`<div class="sidebar-section"><div class="sidebar-title">${g}</div>`;
+    filtered.forEach(c=>{
+      const n=catalog.filter(a=>a.cat===c&&!blocked(clean(a.album))).length;
+      html+=`<div class="sidebar-item${c===currentCat?' active':''}" onclick="filterCat('${c.replace(/'/g,"\\'")}')">
+        <span>${c}</span><span class="count">${n}</span></div>`;
+    });
+    html+='</div>';
+  }
+  document.getElementById('sidebar').innerHTML=html;
+}
+
+function showAll(){
+  currentCat='';
+  current=catalog.filter(a=>!IGNORAR_CAT.includes(a.cat)&&!blocked(clean(a.album)));
+  applySort();
+  document.getElementById('mainTitle').textContent='Todos os produtos';
+  document.getElementById('mainSub').textContent=current.length+' produtos';
+  document.getElementById('q').value='';
+  buildSidebar();
+  setActiveNav(null);
+}
+
+function filterCat(cat){
+  currentCat=cat;
+  current=catalog.filter(a=>a.cat===cat&&!blocked(clean(a.album)));
+  applySort();
+  document.getElementById('mainTitle').textContent=cat;
+  document.getElementById('mainSub').textContent=current.length+' produtos';
+  document.getElementById('q').value='';
+  buildSidebar();
+  setActiveNav(cat);
+}
+
+function setActiveNav(cat){
+  document.querySelectorAll('.nav a').forEach(a=>{
+    a.classList.toggle('active', cat===null?a.textContent==='Todos':a.textContent===cat);
+  });
+}
+
+function sortProducts(val){
+  sortMode=val;
+  applySort();
+}
+
+function applySort(){
+  let arr=[...current];
+  if(sortMode==='recent') arr.sort((a,b)=>yr(clean(b.album))-yr(clean(a.album)));
+  else if(sortMode==='az') arr.sort((a,b)=>clean(a.album).localeCompare(clean(b.album)));
+  else arr.sort((a,b)=>clean(b.album).localeCompare(clean(a.album)));
+  renderGrid(arr);
+}
+
+function renderGrid(items){
+  if(!items.length){
+    document.getElementById('grid').innerHTML='<div class="empty">Nenhum produto encontrado.</div>';
+    return;
+  }
+  document.getElementById('grid').innerHTML=items.map(a=>{
+    const imgs=largeImgs(a.images);
+    const name=clean(a.album);
+    const isNew=yr(name)>=2025;
+    const img=imgs.length
+      ?`<img src="${px(imgs[0])}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\\'no-img\\'>Sem imagem</div>'">`
+      :`<div class="no-img">Sem imagem</div>`;
+    return `<div class="prod-card" onclick="openLb('${a.albumId}')">
+      ${isNew?'<span class="prod-badge new">NOVO</span>':''}
+      <div class="prod-img-wrap">${img}</div>
+      <div class="prod-info">
+        <div class="prod-name">${name}</div>
+        <div class="prod-cat">${a.cat}</div>
+        <div class="prod-footer">
+          <span class="prod-photos">${imgs.length} foto(s)</span>
+          <button class="prod-btn" onclick="event.stopPropagation();openWa('${name.replace(/'/g,"\\'")}')">Pedir</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function doSearch(q){
+  q=q.trim().toLowerCase();
+  if(!q){
+    if(currentCat) filterCat(currentCat);
+    else showAll();
+    return;
+  }
+  const res=catalog.filter(a=>
+    !blocked(clean(a.album))&&
+    (clean(a.album).toLowerCase().includes(q)||a.cat.toLowerCase().includes(q))
+  );
+  document.getElementById('mainTitle').textContent='Resultados para "'+q+'"';
+  document.getElementById('mainSub').textContent=res.length+' produtos';
+  renderGrid(res);
+}
+
+function openWa(name){
+  const msg=encodeURIComponent('Olá! Tenho interesse na camisa: '+name);
+  window.open('https://wa.me/'+WA_NUM+'?text='+msg,'_blank');
+}
+
+function openLb(id){
+  const a=catalog.find(x=>x.albumId===id); if(!a) return;
+  lbAlbum=a;
+  lbImgs=largeImgs(a.images); lbIdx=0;
+  const name=clean(a.album);
+  document.getElementById('lbTitle').textContent=name;
+  document.getElementById('lbName').textContent=name;
+  document.getElementById('lbCat').textContent=a.cat;
+  const msg=encodeURIComponent('Olá! Tenho interesse na camisa: '+name);
+  document.getElementById('lbWa').href='https://wa.me/'+WA_NUM+'?text='+msg;
+  updLb();
+  document.getElementById('lb').classList.add('open');
+}
+
+function updLb(){
+  document.getElementById('lbMain').src=px(lbImgs[lbIdx]);
+  document.getElementById('lbThumbs').innerHTML=lbImgs.map((u,i)=>
+    `<img class="lb-thumb${i===lbIdx?' active':''}" src="${px(u)}" onclick="lbGo(${i})" loading="lazy">`
+  ).join('');
+}
+
+function lbGo(i){ lbIdx=i; updLb(); }
+function lbMove(d){ lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length; updLb(); }
+function closeLb(){ document.getElementById('lb').classList.remove('open'); }
+function lbBg(e){ if(e.target===document.getElementById('lb')) closeLb(); }
+
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lb').classList.contains('open')) return;
+  if(e.key==='ArrowRight') lbMove(1);
+  if(e.key==='ArrowLeft') lbMove(-1);
+  if(e.key==='Escape') closeLb();
+});
+
+// Atualiza número WhatsApp
+document.querySelectorAll('a[href*="wa.me"]').forEach(a=>{
+  if(a.href.includes('5500000000000')) a.href=a.href.replace('5500000000000',WA_NUM);
+});
+
+init();
+</script>
+</body>
+</html>
